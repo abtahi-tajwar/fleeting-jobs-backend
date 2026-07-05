@@ -6,10 +6,7 @@ import com.fleetingtrails.fleetingjobsbackend.company.dto.CompanyCreateDto;
 import com.fleetingtrails.fleetingjobsbackend.company.dto.CompanyGetDto;
 import com.fleetingtrails.fleetingjobsbackend.company.dto.CompanyListItemResponse;
 import com.fleetingtrails.fleetingjobsbackend.company.service.CompanyService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +27,14 @@ public class CompanyController {
     }
 
     @PostMapping("/create")
-    public APIPostResponse<CompanyGetDto> createCompany (CompanyCreateDto body) {
+    public APIPostResponse<CompanyGetDto> createCompany (@RequestBody CompanyCreateDto body) {
+        System.out.println("Name: " + body.getName());
+
+        System.out.println("ListingUrl: " + body.getListingUrl());
+
+        System.out.println("Template: " + body.getSinglePageUrlTemplate());
+
+        System.out.println("Enabled: " + body.getEnabled());
         return APIPostResponse.success(companyService.createCompany(body));
     }
 
