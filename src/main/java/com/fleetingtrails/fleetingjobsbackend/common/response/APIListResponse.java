@@ -13,7 +13,7 @@ public class APIListResponse<T> {
     @Getter
     private List<T> data;
 
-    public static <T> APIListResponse<T> toSuccessResponse (List<T> data) {
+    public static <T> APIListResponse<T> success (List<T> data) {
         APIListResponse<T> response = new APIListResponse<T>();
         response.setSuccess(true);
         response.setData(data);

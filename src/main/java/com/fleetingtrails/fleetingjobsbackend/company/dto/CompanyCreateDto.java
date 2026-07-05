@@ -1,26 +1,16 @@
 package com.fleetingtrails.fleetingjobsbackend.company.dto;
 
-import lombok.Getter;
 import lombok.Setter;
 
-public class CompanyListItemResponse {
-    @Getter
-    @Setter
-    private Long id;
-    @Getter
+public class CompanyCreateDto {
     @Setter
     private String name;
-    @Getter
     @Setter
     private String listingUrl;
-    @Getter
     @Setter
     private String singlePageUrlTemplate;
-    @Getter
     @Setter
-    private Boolean enabled;
+    private Boolean enabled = true;
 
-    public CompanyListItemResponse() {
-
-    }
+    public CompanyCreateDto () { }
 }

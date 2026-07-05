@@ -1,5 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.company.service;
 
+import com.fleetingtrails.fleetingjobsbackend.company.dto.CompanyCreateDto;
+import com.fleetingtrails.fleetingjobsbackend.company.dto.CompanyGetDto;
 import com.fleetingtrails.fleetingjobsbackend.company.dto.CompanyListItemResponse;
 import com.fleetingtrails.fleetingjobsbackend.company.entity.CompanyEntity;
 import com.fleetingtrails.fleetingjobsbackend.company.mapper.CompanyMapper;
@@ -31,5 +33,11 @@ public class CompanyService {
         }
 
         return response;
+    }
+
+    public CompanyGetDto createCompany (CompanyCreateDto dto) {
+        CompanyEntity newCompanyEntity = companyMapper.toEntity(dto);
+        CompanyEntity res = companyRepository.save(newCompanyEntity);
+        return companyMapper.toCompanyGetDto(res);
     }
 }
