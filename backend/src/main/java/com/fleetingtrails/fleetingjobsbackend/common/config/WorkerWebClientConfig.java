@@ -1,0 +1,18 @@
+package com.fleetingtrails.fleetingjobsbackend.common.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
+
+@Configuration
+public class WorkerWebClientConfig {
+    @Value("${worker.base-url}")
+    private String workerBaseUrl;
+
+    @Bean
+    public WebClient workerWebClient(WebClientConfig webClientConfig) {
+        return webClientConfig.createWebClient(workerBaseUrl);
+
+    }
+}
