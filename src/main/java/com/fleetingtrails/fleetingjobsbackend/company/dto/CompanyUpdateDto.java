@@ -5,25 +5,25 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-public class CompanyCreateDto {
+public class CompanyUpdateDto {
     @NotBlank(message = "Company name is required")
-    @Setter
     @Getter
+    @Setter
     private String name;
 
     @NotBlank(message = "Listing URL is required")
-    @Setter
     @Getter
+    @Setter
     private String listingUrl;
 
-    @Setter
     @Getter
+    @Setter
     private String singlePageUrlTemplate;
 
     @NotNull(message = "Enabled flag is required")
-    @Setter
     @Getter
+    @Setter
     private Boolean enabled = true;
 
-    public CompanyCreateDto () { }
+    public CompanyUpdateDto () { }
 }
