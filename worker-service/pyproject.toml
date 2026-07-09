@@ -1,0 +1,10 @@
+[project]
+name = "worker-service"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.139.0",
+    "playwright>=1.61.0",
+]
