@@ -3,12 +3,31 @@ from bs4 import BeautifulSoup
 
 def navigate_to (url: str):
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True)
+        current_page = 0
+        size = 10
+        jobs = []
+        result_count = 0
+        total_pages = 0
+
+        browser = playwright.chromium.launch(headless=False)
         page = browser.new_page()
         page.goto(url)
-        content = page.content()
+        page.wait_for_load_state("networkidle")
+        initial_content = page.content()
+
+        soup = BeautifulSoup(initial_content, 'lxml')
+        
+        result_count = int(soup.select_one('span.result-count').text.strip())
+        total_pages = result_count / size
+        jobs.extend(extract_listings(initial_content))
+        for current_page in range(int(total_pages)):
+            current_page += 1
+            print(f"Currently parsing: {url}?form={current_page * size}&s=1")
+            page.goto(f"{url}?form={current_page * size}&s=1")
+            content = page.content()
+            jobs.extend(extract_listings(content))
         browser.close()
-        return extract_listings(content)
+        return jobs
 
 def extract_listings(content: str):
     jobs = []
