@@ -12,7 +12,7 @@ def navigate_to (url: str):
         browser = playwright.chromium.launch(headless=False)
         page = browser.new_page()
         page.goto(url)
-        page.wait_for_load_state("networkidle")
+        page.wait_for_selector("div.information")
         initial_content = page.content()
 
         soup = BeautifulSoup(initial_content, 'lxml')
@@ -20,10 +20,12 @@ def navigate_to (url: str):
         result_count = int(soup.select_one('span.result-count').text.strip())
         total_pages = result_count / size
         jobs.extend(extract_listings(initial_content))
+        print("I am here")
         for current_page in range(int(total_pages)):
             current_page += 1
-            print(f"Currently parsing: {url}?form={current_page * size}&s=1")
-            page.goto(f"{url}?form={current_page * size}&s=1")
+            print(f"Currently parsing: {url}?from={current_page * size}&s=1")
+            page.goto(f"{url}?from={current_page * size}&s=1")
+            page.wait_for_selector("div.information")
             content = page.content()
             jobs.extend(extract_listings(content))
         browser.close()
