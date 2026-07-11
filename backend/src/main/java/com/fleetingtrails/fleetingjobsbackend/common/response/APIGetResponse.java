@@ -10,12 +10,20 @@ public class APIGetResponse<T> {
     @Getter
     @Setter
     private T data;
+    @Getter
+    @Setter
+    private String message = "";
 
-    public static <T> APIPostResponse<T> success (T data) {
-        APIPostResponse<T> response = new APIPostResponse<T>();
+    public static <T> APIGetResponse<T> success (T data) {
+        APIGetResponse<T> response = new APIGetResponse<T>();
         response.setSuccess(true);
         response.setData(data);
-
         return response;
     }
+    public static <T> APIGetResponse<T> success (T data, String message) {
+        APIGetResponse<T> res =  APIGetResponse.success(data);
+        res.setMessage(message);
+        return res;
+    }
+
 }
