@@ -12,3 +12,13 @@ dependencies = [
     "pydantic>=2.13.4",
     "uvicorn>=0.51.0",
 ]
+[tool.taskipy.tasks]
+dev = "uvicorn app.main:app --reload"
+test = "pytest"
+lint = "ruff check ."
+format = "ruff format ."
+
+[dependency-groups]
+dev = [
+    "taskipy>=1.14.1",
+]
