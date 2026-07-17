@@ -1,5 +1,9 @@
+from pika import channel
+import pika
 from playwright.sync_api import sync_playwright, Playwright
 from bs4 import BeautifulSoup
+from app.common.rabbit.rabbit_service import RabbitService
+from app.common.rabbit.rabbit_config import RECEIVE_JOB_DETAILS_QUEUE
 
 def parse_jobs (url: str, config: dict):
     with sync_playwright() as playwright:
@@ -52,3 +56,15 @@ def extract_listings(content: str, config: dict):
         })
 
     return jobs 
+
+def extract_job_details(url: str):
+    print(f"Extracting job details from: {url}")
+    result = {
+        "id": 3,
+        "url": "https://google.com/",
+        "description": "Sample description"
+    }
+    
+
+    rabbitService = RabbitService()
+    rabbitService.publish(RECEIVE_JOB_DETAILS_QUEUE, result)

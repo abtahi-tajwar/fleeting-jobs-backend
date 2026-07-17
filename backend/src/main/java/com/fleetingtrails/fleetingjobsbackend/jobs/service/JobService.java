@@ -1,6 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.jobs.service;
 
 import com.fleetingtrails.fleetingjobsbackend.common.services.WorkerService;
+import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.dto.ReceiveJobDetailsMessageDto;
 import com.fleetingtrails.fleetingjobsbackend.jobs.dto.JobListItemDto;
 import com.fleetingtrails.fleetingjobsbackend.jobs.entity.JobEntity;
 import com.fleetingtrails.fleetingjobsbackend.jobs.mapper.JobMapper;
@@ -53,6 +54,9 @@ public class JobService {
         }
 
         return jobs;
+    }
 
+    public void receiveJobDetails (ReceiveJobDetailsMessageDto message) {
+        System.out.printf("Received job details: %s%n", message.getDescription());
     }
 }

@@ -20,6 +20,9 @@
             }
         }
     },
+    "job_details": {
+        "description": ".phw-job-description"
+    },
     "pagination": {
         "type": "url_parameter",
         "parameter": "from",

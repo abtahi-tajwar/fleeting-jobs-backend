@@ -10,9 +10,50 @@ services:
 
     ports:
       - "5432:5432"
-
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: fleeting-ollama
+    ports:
+      - "11434:11434"
+
+    volumes:
+      - ollama-data:/root/.ollama
+
+    restart: unless-stopped
+
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: fleeting-ollama-init
+    depends_on:
+      - ollama
+    entrypoint: >
+      sh -c "
+      sleep 5 &&
+      ollama pull qwen3:4b
+      "
+
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: fleeting-rabbitmq
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Management UI
+
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+    restart: unless-stopped
+
 volumes:
   postgres-data:
+  ollama-data:
+  rabbitmq-data:

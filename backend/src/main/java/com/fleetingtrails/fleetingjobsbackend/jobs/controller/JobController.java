@@ -1,8 +1,9 @@
 package com.fleetingtrails.fleetingjobsbackend.jobs.controller;
 
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIGetResponse;
+import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.dto.RequestJobDetailsMessageDto;
+import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.producer.RabbitProducerService;
 import com.fleetingtrails.fleetingjobsbackend.jobs.dto.JobListItemDto;
-import com.fleetingtrails.fleetingjobsbackend.jobs.entity.JobEntity;
 import com.fleetingtrails.fleetingjobsbackend.jobs.service.JobService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,11 +14,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/jobs")
 public class JobController {
-    public final JobService jobService;
+    private final JobService jobService;
+    private final RabbitProducerService rabbitProducerService;
     public JobController(
-            JobService jobService
+            JobService jobService,
+            RabbitProducerService rabbitProducerService
     ) {
         this.jobService = jobService;
+        this.rabbitProducerService = rabbitProducerService;
     }
     @GetMapping("search/test")
     public APIGetResponse<List<JobListItemDto>> jobsSearchTest () {
@@ -36,5 +40,14 @@ public class JobController {
         res.setData(data);
         res.setSuccess(true);
         return res;
+    }
+
+    @GetMapping("testrabit")
+    public void testRabbit() {
+        RequestJobDetailsMessageDto message = new RequestJobDetailsMessageDto();
+        message.setId(3L);
+        message.setUrl("https://google.com/");
+
+        rabbitProducerService.requestJobDetails(message);
     }
 }
