@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
     public static final String REQUEST_JOB_DETAILS_QUEUE = "request.job_details";
     public static final String RECEIVE_JOB_DETAILS_QUEUE = "receive.job_details";
+    public static final String RECEIVE_NEW_JOB_LISTING = "receive.new_job_listing";
 
     @Bean
     public JacksonJsonMessageConverter jacksonJsonMessageConverter() {
@@ -24,6 +25,10 @@ public class RabbitConfig {
     @Bean
     public Queue receiveJobDetailsQueue() {
         return new Queue(RECEIVE_JOB_DETAILS_QUEUE, true);
+    }
+    @Bean
+    public Queue receiveNewJobListingQueue () {
+        return new Queue(RECEIVE_NEW_JOB_LISTING, true);
     }
 
     public RabbitTemplate rabbitTemplate(

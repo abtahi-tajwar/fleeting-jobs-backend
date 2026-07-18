@@ -2,8 +2,10 @@ package com.fleetingtrails.fleetingjobsbackend.jobs.service;
 
 import com.fleetingtrails.fleetingjobsbackend.common.services.WorkerService;
 import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.dto.ReceiveJobDetailsMessageDto;
+import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.dto.ReceiveNewJobListingMessageDto;
 import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.dto.RequestJobDetailsMessageDto;
 import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.producer.RabbitProducerService;
+import com.fleetingtrails.fleetingjobsbackend.jobs.constants.JobConstants;
 import com.fleetingtrails.fleetingjobsbackend.jobs.dto.JobListItemDto;
 import com.fleetingtrails.fleetingjobsbackend.jobs.entity.JobEntity;
 import com.fleetingtrails.fleetingjobsbackend.jobs.mapper.JobMapper;
@@ -47,6 +49,21 @@ public class JobService {
 
         return res;
     }
+    public void processFetchJobs () {
+        this.workerService.webClient.get()
+                .uri("/jobs/search/5")
+                .retrieve()
+                .toBodilessEntity()
+                .block();
+    }
+
+    public void handleRecieveNewJobListing (ReceiveNewJobListingMessageDto message) {
+        JobEntity entity = new JobEntity();
+        System.out.printf("Received new listing %s", message.getTitle());
+        entity.setTitle(message.getTitle());
+        entity.setUrl(message.getUrl());
+        jobRepository.save(entity);
+    }
 
 
 
@@ -76,11 +93,15 @@ public class JobService {
         List<JobEntity> res = jobRepository.findByDescriptionIsNull();
         List<JobListItemDto> jobs = new ArrayList<>();
         RequestJobDetailsMessageDto message = new RequestJobDetailsMessageDto();
+        // for test only
+        int count = 0;
         for (JobEntity job : res) {
+            if (count == JobConstants.JOB_DESCRIPTION_FETCH_LIMIT) break;
             jobs.add(jobMapper.toJobListItemDto(job));
             message.setUrl(job.getUrl());
             message.setId(job.getId());
             rabbitProducerService.requestJobDetails(message);
+            count += 1;
         }
         return jobs;
     }

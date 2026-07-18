@@ -18,4 +18,11 @@ public class APIPostResponse<T> {
 
         return response;
     }
+    public static APIPostResponse<String> failed (String message) {
+        APIPostResponse<String> response = new APIPostResponse<>();
+        response.setSuccess(false);
+        response.setData(message);
+
+        return response;
+    }
 }

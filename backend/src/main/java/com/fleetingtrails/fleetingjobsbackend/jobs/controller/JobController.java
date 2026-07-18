@@ -1,6 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.jobs.controller;
 
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIGetResponse;
+import com.fleetingtrails.fleetingjobsbackend.common.response.APIPostResponse;
 import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.dto.RequestJobDetailsMessageDto;
 import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.producer.RabbitProducerService;
 import com.fleetingtrails.fleetingjobsbackend.jobs.dto.JobListItemDto;
@@ -51,5 +52,14 @@ public class JobController {
     @PostMapping("process/fetch/description")
     public List<JobListItemDto> processJobDescriptionFetch () {
         return jobService.processJobDescriptionFetch();
+    }
+    @PostMapping("process/fetch/jobs")
+    public APIPostResponse<String> processFetchJobs () {
+        try {
+            jobService.processFetchJobs();
+            return APIPostResponse.success("Job Fetch queried successfully");
+        } catch (Exception e) {
+            return APIPostResponse.failed(e.getMessage());
+        }
     }
 }

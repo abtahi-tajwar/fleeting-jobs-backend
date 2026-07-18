@@ -48,3 +48,5 @@ class RabbitService:
     async def stop(self):
         if self.connection:
             await self.connection.close()
+
+rabbit_service = RabbitService()
