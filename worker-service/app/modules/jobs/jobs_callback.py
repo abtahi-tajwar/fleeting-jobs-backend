@@ -1,6 +1,5 @@
 import json
-
-from app.scraping.scraping_service import extract_job_details
+from app.modules.jobs.job_parser import job_parser
 
 def job_details_fetch_callback(ch, method, properties, body):
     message = json.loads(body)
@@ -9,4 +8,4 @@ def job_details_fetch_callback(ch, method, properties, body):
     print(message["url"])
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
-    extract_job_details(message["url"])
+    job_parser.extract_job_details(message["url"])
