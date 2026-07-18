@@ -85,16 +85,22 @@ class JobParser:
 
         return jobs
 
-    def extract_job_details(self, url: str):
+    async def extract_job_details(self, job_id: int, url: str, config: dict):
         print(f"Extracting job details from: {url}")
 
+        await self.page.goto(url);
+        await self.page.wait_for_selector(config['job_details']['description'])
+        content = await self.page.content()
+
+        content_soup = BeautifulSoup(content, 'lxml')
+        description = content_soup.select_one(config['job_details']['description']).text.strip()
         result = {
-            "id": 3,
-            "url": "https://google.com/",
-            "description": "Sample description"
+            "id": job_id,
+            "url": url,
+            "description": description
         }
 
-        rabbitService = RabbitService()
-        rabbitService.publish(RECEIVE_JOB_DETAILS_QUEUE, result)
+        rabbit_service = RabbitService()
+        rabbit_service.publish(RECEIVE_JOB_DETAILS_QUEUE, result)
 
 job_parser = JobParser()

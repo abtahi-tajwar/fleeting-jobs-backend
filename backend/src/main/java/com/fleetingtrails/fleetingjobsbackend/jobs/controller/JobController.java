@@ -6,6 +6,7 @@ import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.producer.Ra
 import com.fleetingtrails.fleetingjobsbackend.jobs.dto.JobListItemDto;
 import com.fleetingtrails.fleetingjobsbackend.jobs.service.JobService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,8 +28,7 @@ public class JobController {
     public APIGetResponse<List<JobListItemDto>> jobsSearchTest () {
         List<JobListItemDto> data = jobService.testConnection();
         APIGetResponse<List<JobListItemDto>> res = new APIGetResponse<>();
-        APIGetResponse.success(res, "Job Scraped Successfully");
-        return res;
+        return APIGetResponse.success(data, "Job Scraped Successfully");
     }
 
     @GetMapping("/list")
@@ -36,10 +36,7 @@ public class JobController {
         List<JobListItemDto> data = jobService.getJobs();
         APIGetResponse<List<JobListItemDto>> res = new APIGetResponse<>();
 
-//        APIGetResponse.success(jobService.getJobs());
-        res.setData(data);
-        res.setSuccess(true);
-        return res;
+        return APIGetResponse.success(data);
     }
 
     @GetMapping("testrabit")
@@ -49,5 +46,10 @@ public class JobController {
         message.setUrl("https://google.com/");
 
         rabbitProducerService.requestJobDetails(message);
+    }
+
+    @PostMapping("process/fetch/description")
+    public List<JobListItemDto> processJobDescriptionFetch () {
+        return jobService.processJobDescriptionFetch();
     }
 }

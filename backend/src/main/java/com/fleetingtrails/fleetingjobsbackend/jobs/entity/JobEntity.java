@@ -16,4 +16,6 @@ public class JobEntity {
     private String title;
     @Column(name = "url")
     private String url;
+    @Column(name = "description")
+    private String description;
 }

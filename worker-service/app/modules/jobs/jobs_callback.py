@@ -1,11 +1,19 @@
 import json
+import aio_pika
+
+from app.example_parser_config.example_parser_config import load_config
 from app.modules.jobs.job_parser import job_parser
 
-def job_details_fetch_callback(ch, method, properties, body):
-    message = json.loads(body)
-    print(message)
-    print(message["id"])
-    print(message["url"])
 
-    ch.basic_ack(delivery_tag=method.delivery_tag)
-    job_parser.extract_job_details(message["url"])
+async def job_details_fetch_callback(message: aio_pika.IncomingMessage):
+    payload = json.loads(message.body)
+
+    print(f"Parsing description for {payload['id']}")
+
+    config = load_config("rbc")
+
+    await job_parser.extract_job_details(
+        payload["id"],
+        payload["url"],
+        config,
+    )

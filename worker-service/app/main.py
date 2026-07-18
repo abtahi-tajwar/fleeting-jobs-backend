@@ -8,23 +8,21 @@ from app.example_parser_config.example_parser_config import load_config
 from threading import Thread
 
 rabbit_service = RabbitService()
-def start_consumer():
-    rabbit_service.declare_queue(REQUEST_JOB_DETAILS_QUEUE)
-    rabbit_service.consume(
+async def start_consumer():
+    await rabbit_service.connect()
+    await rabbit_service.consume(
         REQUEST_JOB_DETAILS_QUEUE,
         job_details_fetch_callback
     )
-    rabbit_service.start()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await job_parser.start()
-    thread = Thread(target=start_consumer, daemon=True)
-    thread.start()
+    await start_consumer()
     print("RabbitMQ consumer started")
     yield
     print("Stopping RabbitMQ consumer")
-    rabbit_service.stop()
+    await rabbit_service.stop()
 
 app = FastAPI(lifespan=lifespan)
 
