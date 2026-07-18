@@ -10,7 +10,6 @@ import com.fleetingtrails.fleetingjobsbackend.jobs.dto.JobListItemDto;
 import com.fleetingtrails.fleetingjobsbackend.jobs.entity.JobEntity;
 import com.fleetingtrails.fleetingjobsbackend.jobs.mapper.JobMapper;
 import com.fleetingtrails.fleetingjobsbackend.jobs.repository.JobRepository;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,20 +34,6 @@ public class JobService {
         this.rabbitProducerService = rabbitProducerService;
     }
 
-    // Needs update
-    public List<JobListItemDto> testConnection () {
-        List<JobListItemDto> res = this.workerService.webClient.get().uri("/jobs/search/5").retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<JobListItemDto>>() {})
-                .block();
-
-        List<JobEntity> jobs = new ArrayList<>();
-        for (JobListItemDto item : res) {
-            jobs.add(jobMapper.toJobEntity(item));
-        }
-        jobRepository.saveAll(jobs);
-
-        return res;
-    }
     public void processFetchJobs () {
         this.workerService.webClient.get()
                 .uri("/jobs/search/5")
@@ -59,7 +44,6 @@ public class JobService {
 
     public void handleRecieveNewJobListing (ReceiveNewJobListingMessageDto message) {
         JobEntity entity = new JobEntity();
-        System.out.printf("Received new listing %s", message.getTitle());
         entity.setTitle(message.getTitle());
         entity.setUrl(message.getUrl());
         jobRepository.save(entity);

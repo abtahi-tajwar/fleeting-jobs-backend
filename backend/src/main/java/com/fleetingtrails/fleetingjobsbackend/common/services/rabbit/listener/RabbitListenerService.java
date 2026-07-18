@@ -15,7 +15,7 @@ public class RabbitListenerService {
         this.jobService = jobService;
     }
 
-//    @RabbitListener(queues = RabbitConfig.RECEIVE_JOB_DETAILS_QUEUE)
+    @RabbitListener(queues = RabbitConfig.RECEIVE_JOB_DETAILS_QUEUE)
     public void receiveJobDetails (ReceiveJobDetailsMessageDto message) {
         jobService.receiveJobDetails(message);
     }

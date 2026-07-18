@@ -108,7 +108,6 @@ class JobParser:
             "url": url,
             "description": description
         }
-
         await rabbit_service.publish(RECEIVE_JOB_DETAILS_QUEUE, result)
 
 

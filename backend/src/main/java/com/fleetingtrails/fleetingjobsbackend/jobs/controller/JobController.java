@@ -17,19 +17,10 @@ import java.util.List;
 @RequestMapping("/jobs")
 public class JobController {
     private final JobService jobService;
-    private final RabbitProducerService rabbitProducerService;
     public JobController(
-            JobService jobService,
-            RabbitProducerService rabbitProducerService
+            JobService jobService
     ) {
         this.jobService = jobService;
-        this.rabbitProducerService = rabbitProducerService;
-    }
-    @GetMapping("search/test")
-    public APIGetResponse<List<JobListItemDto>> jobsSearchTest () {
-        List<JobListItemDto> data = jobService.testConnection();
-        APIGetResponse<List<JobListItemDto>> res = new APIGetResponse<>();
-        return APIGetResponse.success(data, "Job Scraped Successfully");
     }
 
     @GetMapping("/list")
@@ -38,15 +29,6 @@ public class JobController {
         APIGetResponse<List<JobListItemDto>> res = new APIGetResponse<>();
 
         return APIGetResponse.success(data);
-    }
-
-    @GetMapping("testrabit")
-    public void testRabbit() {
-        RequestJobDetailsMessageDto message = new RequestJobDetailsMessageDto();
-        message.setId(3L);
-        message.setUrl("https://google.com/");
-
-        rabbitProducerService.requestJobDetails(message);
     }
 
     @PostMapping("process/fetch/description")
