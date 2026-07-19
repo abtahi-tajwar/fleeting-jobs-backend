@@ -1,8 +1,16 @@
 package com.fleetingtrails.fleetingjobsbackend.company.entity;
 
+import com.fleetingtrails.fleetingjobsbackend.jobs.entity.JobEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "companies")
@@ -20,45 +28,12 @@ public class CompanyEntity {
     private String singlePageUrlTemplate;
     @Column(name = "enabled", nullable = false)
     private Boolean enabled = true;
-
-//    public Long getId() {
-//        return id;
-//    }
-
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//
-//    public String getName() {
-//        return name;
-//    }
-//
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//
-//    public String getListingUrl() {
-//        return listingUrl;
-//    }
-//
-//    public void setListingUrl(String listingUrl) {
-//        this.listingUrl = listingUrl;
-//    }
-//
-//    public String getSinglePageUrlTemplate() {
-//        return singlePageUrlTemplate;
-//    }
-//
-//    public void setSinglePageUrlTemplate(String singlePageUrlTemplate) {
-//        this.singlePageUrlTemplate = singlePageUrlTemplate;
-//    }
-//
-//    public Boolean getEnabled() {
-//        return enabled;
-//    }
-//
-//    public void setEnabled(Boolean enabled) {
-//        this.enabled = enabled;
-//    }
-
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JobEntity> jobs = new ArrayList<>();
+    @UpdateTimestamp
+    @Column(name="created_at")
+    private LocalDateTime createdAt;
+    @CreationTimestamp
+    @Column(name="updated_at")
+    private LocalDateTime updatedAt;
 }

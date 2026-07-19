@@ -1,5 +1,6 @@
 package com.fleetingtrails.fleetingjobsbackend.jobs.entity;
 
+import com.fleetingtrails.fleetingjobsbackend.company.entity.CompanyEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,9 @@ public class JobEntity {
     private String url;
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "company_id", nullable = false)
+    private CompanyEntity company;
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
