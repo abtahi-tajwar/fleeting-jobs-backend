@@ -5,6 +5,8 @@ import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.dto.Receive
 import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.dto.ReceiveNewJobListingMessageDto;
 import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.dto.RequestJobDetailsMessageDto;
 import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.producer.RabbitProducerService;
+import com.fleetingtrails.fleetingjobsbackend.company.entity.CompanyEntity;
+import com.fleetingtrails.fleetingjobsbackend.company.repository.CompanyRepository;
 import com.fleetingtrails.fleetingjobsbackend.jobs.constants.JobConstants;
 import com.fleetingtrails.fleetingjobsbackend.jobs.dto.JobListItemDto;
 import com.fleetingtrails.fleetingjobsbackend.jobs.entity.JobEntity;
@@ -12,6 +14,8 @@ import com.fleetingtrails.fleetingjobsbackend.jobs.mapper.JobMapper;
 import com.fleetingtrails.fleetingjobsbackend.jobs.repository.JobRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,28 +25,36 @@ public class JobService {
     private final JobRepository jobRepository;
     private final JobMapper jobMapper;
     private final RabbitProducerService rabbitProducerService;
+    private final CompanyRepository companyRepository;
 
-    public JobService (
+    public JobService(
             WorkerService workerService,
             JobRepository jobRepository,
             JobMapper jobMapper,
-            RabbitProducerService rabbitProducerService
+            RabbitProducerService rabbitProducerService,
+            CompanyRepository companyRepository
     ) {
         this.workerService = workerService;
         this.jobRepository = jobRepository;
         this.jobMapper = jobMapper;
         this.rabbitProducerService = rabbitProducerService;
+        this.companyRepository = companyRepository;
     }
 
-    public void processFetchJobs () {
-        this.workerService.webClient.get()
-                .uri("/jobs/search/5")
-                .retrieve()
-                .toBodilessEntity()
-                .block();
+    public void processFetchJobs() {
+        LocalDateTime cutoff = LocalDateTime.now().minus(Duration.ofMillis(JobConstants.SCRAPE_INTERVAL_MS));
+        List<CompanyEntity> companiesToScrape = companyRepository.findByLastScrapedAtIsNullOrLastScrapedAtBefore(cutoff);
+        for (CompanyEntity company : companiesToScrape) {
+            this.workerService.webClient.get()
+                    .uri("/jobs/search/5")
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+        }
     }
 
-    public void handleRecieveNewJobListing (ReceiveNewJobListingMessageDto message) {
+
+    public void handleRecieveNewJobListing(ReceiveNewJobListingMessageDto message) {
         JobEntity entity = new JobEntity();
         entity.setTitle(message.getTitle());
         entity.setUrl(message.getUrl());
@@ -50,8 +62,7 @@ public class JobService {
     }
 
 
-
-    public List<JobListItemDto> getJobs () {
+    public List<JobListItemDto> getJobs() {
         List<JobEntity> jobsResponse = jobRepository.findAll();
         List<JobListItemDto> jobs = new ArrayList<>();
 
@@ -63,7 +74,7 @@ public class JobService {
         return jobs;
     }
 
-    public void receiveJobDetails (ReceiveJobDetailsMessageDto message) {
+    public void receiveJobDetails(ReceiveJobDetailsMessageDto message) {
         String description = message.getDescription();
         Long id = message.getId();
         jobRepository.findById(id).ifPresent(job -> {
@@ -73,7 +84,7 @@ public class JobService {
         });
     }
 
-    public List<JobListItemDto> processJobDescriptionFetch () {
+    public List<JobListItemDto> processJobDescriptionFetch() {
         List<JobEntity> res = jobRepository.findByDescriptionIsNull();
         List<JobListItemDto> jobs = new ArrayList<>();
         RequestJobDetailsMessageDto message = new RequestJobDetailsMessageDto();

@@ -30,6 +30,8 @@ public class CompanyEntity {
     private Boolean enabled = true;
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobEntity> jobs = new ArrayList<>();
+    @Column(name = "last_scraped_at")
+    private LocalDateTime lastScrapedAt;
     @UpdateTimestamp
     @Column(name="created_at")
     private LocalDateTime createdAt;

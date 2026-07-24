@@ -9,6 +9,9 @@ from app.modules.jobs.job_parser import job_parser
 from app.example_parser_config.example_parser_config import load_config
 from threading import Thread
 
+from app.modules.jobs.types.ParserTemplate import ScrapeJobRequest
+
+
 async def start_consumer():
     await rabbit_service.connect()
     await rabbit_service.consume(
@@ -38,5 +41,17 @@ async def search_jobs(company_id: int):
         job_parser.parse_jobs("https://jobs.rbc.com/ca/en/c/technology-analytics-research-jobs", config)
     )
     return { "status": "started" }
+
+@app.post("/jobs/scrape-list/")
+async def scrape_job_list(request: ScrapeJobRequest):
+    template = request.parser_template
+    url = request.listing_url
+    company_id = request.company_id
+
+    asyncio.create_task(
+        job_parser.parse_jobs(url, template)
+    )
+
+    return 0
     
 

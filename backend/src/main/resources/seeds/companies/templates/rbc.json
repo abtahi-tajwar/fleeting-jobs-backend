@@ -1,0 +1,36 @@
+{
+  "company": "RBC",
+  "version": 1,
+  "start_url": "https://jobs.rbc.com/ca/en/c/technology-analytics-research-jobs",
+  "posting_count": {
+    "selector": "span.result-count"
+  },
+  "listing": {
+    "container": "div.information",
+    "fields": {
+      "title": {
+        "type": "text",
+        "selector": "span[role=\"heading\"] > a > div > span"
+      },
+      "url": {
+        "type": "attribute",
+        "attribute": "href",
+        "selector": "span[role=\"heading\"] > a",
+        "absolute": true
+      }
+    }
+  },
+  "job_details": {
+    "description": ".phw-job-description"
+  },
+  "pagination": {
+    "type": "url_parameter",
+    "parameter": "from",
+    "start": 0,
+    "increment": 10,
+    "page_size": 10,
+    "additional_parameters": {
+      "s": "1"
+    }
+  }
+}

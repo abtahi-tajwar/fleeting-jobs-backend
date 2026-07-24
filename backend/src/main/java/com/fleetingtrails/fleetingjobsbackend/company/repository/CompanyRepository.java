@@ -3,6 +3,11 @@ package com.fleetingtrails.fleetingjobsbackend.company.repository;
 import com.fleetingtrails.fleetingjobsbackend.company.entity.CompanyEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
-    
+    List<CompanyEntity> findByLastScrapedAtIsNullOrLastScrapedAtBefore(
+            LocalDateTime cutoff
+    );
 }

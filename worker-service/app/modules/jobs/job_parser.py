@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 
 from app.common.rabbit.rabbit_service import rabbit_service
 from app.common.rabbit.rabbit_config import RECEIVE_JOB_DETAILS_QUEUE, RECEIVE_NEW_JOB_LISTING
+from app.modules.jobs.types.ParserTemplate import ParserTemplate
 
 
 class JobParser:
@@ -22,7 +23,7 @@ class JobParser:
         await self.browser.close()
         await self.playwright.stop()
 
-    async def parse_jobs(self, url: str, config: dict):
+    async def parse_jobs(self, url: str, config: ParserTemplate):
         current_page = 0
         size = 10
         jobs = []
@@ -65,7 +66,7 @@ class JobParser:
 
         return jobs
 
-    async def extract_listings(self, content: str, config: dict):
+    async def extract_listings(self, content: str, config: ParserTemplate):
         jobs = []
 
         soup = BeautifulSoup(content, "lxml")
