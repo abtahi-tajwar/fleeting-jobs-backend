@@ -1,16 +1,15 @@
 import asyncio
-import json
 
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from starlette.responses import FileResponse, StreamingResponse
+from starlette.responses import StreamingResponse
 
 from app.common.rabbit.rabbit_config import REQUEST_JOB_DETAILS_QUEUE
 from app.common.rabbit.rabbit_service import rabbit_service
 from app.modules.jobs.jobs_callback import job_details_fetch_callback
 from app.modules.jobs.job_parser import job_parser
-from app.modules.resume.generate_resume_pdf import pdf_service
+from app.modules.document.generate_resume_pdf import pdf_service
 
 from app.modules.jobs.types.ParserTemplate import ScrapeJobRequest
 
@@ -51,7 +50,7 @@ async def scrape_job_list(request: ScrapeJobRequest):
 
     return 0
 
-@app.get("/documents/test-resume.pdf")
+@app.post("/documents/test-resume.pdf")
 async def download_resume_pdf():
     pdf_buffer = pdf_service.generate_resume()
 
