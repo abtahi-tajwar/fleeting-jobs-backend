@@ -3,12 +3,14 @@ import json
 
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+
+from starlette.responses import FileResponse, StreamingResponse
+
 from app.common.rabbit.rabbit_config import REQUEST_JOB_DETAILS_QUEUE
 from app.common.rabbit.rabbit_service import rabbit_service
 from app.modules.jobs.jobs_callback import job_details_fetch_callback
 from app.modules.jobs.job_parser import job_parser
-from app.example_parser_config.example_parser_config import load_config
-from threading import Thread
+from app.modules.resume.generate_resume_pdf import pdf_service
 
 from app.modules.jobs.types.ParserTemplate import ScrapeJobRequest
 
@@ -35,14 +37,6 @@ app = FastAPI(lifespan=lifespan)
 def root():
     return {"message": "Application is running successfully!"}
 
-@app.get("/jobs/search/{company_id}")
-async def search_jobs(company_id: int):
-    config = load_config(f"rbc")
-    asyncio.create_task(
-        job_parser.parse_jobs("https://jobs.rbc.com/ca/en/c/technology-analytics-research-jobs", config)
-    )
-    return { "status": "started" }
-
 @app.post("/jobs/scrape-list/")
 async def scrape_job_list(request: ScrapeJobRequest):
     template = request.parser_template
@@ -56,5 +50,17 @@ async def scrape_job_list(request: ScrapeJobRequest):
     )
 
     return 0
+
+@app.get("/documents/test-resume.pdf")
+async def download_resume_pdf():
+    pdf_buffer = pdf_service.generate_resume()
+
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": 'attachment; filename="resume.pdf"'
+        }
+    )
     
 

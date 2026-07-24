@@ -12,6 +12,7 @@ dependencies = [
     "pika>=1.4.1",
     "playwright>=1.61.0",
     "pydantic>=2.13.4",
+    "reportlab>=5.0.0",
     "uvicorn>=0.51.0",
 ]
 [tool.taskipy.tasks]
