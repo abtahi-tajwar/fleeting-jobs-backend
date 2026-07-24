@@ -23,7 +23,7 @@ public class CompanyEntity {
     private Long id;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "listing_url", nullable = false)
+    @Column(name = "listing_url", nullable = false, unique = true)
     private String listingUrl;
     @Column(name = "single_page_url_template", nullable = true)
     private String singlePageUrlTemplate;

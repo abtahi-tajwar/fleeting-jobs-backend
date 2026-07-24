@@ -5,6 +5,7 @@ import com.fleetingtrails.fleetingjobsbackend.company.repository.CompanyReposito
 import com.fleetingtrails.fleetingjobsbackend.parser.entity.ParserTemplateEntity;
 import com.fleetingtrails.fleetingjobsbackend.parser.entity.ParserTemplateType;
 import com.fleetingtrails.fleetingjobsbackend.parser.repository.ParserTemplateRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -27,10 +28,8 @@ public class CompanySeeder {
     private final ObjectMapper objectMapper;
     ClassPathResource resource = new ClassPathResource("seeds/companies/companies_seed.csv");
 
+    @Transactional
     public void seed() {
-        if (companyRepository.count() > 0) {
-            return;
-        }
         try (
                 Reader reader = new BufferedReader(
                         new InputStreamReader(resource.getInputStream())
@@ -44,17 +43,24 @@ public class CompanySeeder {
             for (CSVRecord row : csv) {
                 ParserTemplateType template = this.getParserTemplate(row.get("url_template_file_name"));
 
-                CompanyEntity companyEntity = new CompanyEntity();
+                CompanyEntity companyEntity = companyRepository
+                        .findByListingUrl(row.get("listing_url"))
+                        .orElseGet(CompanyEntity::new);
+
                 companyEntity.setName(row.get("name"));
                 companyEntity.setListingUrl(row.get("listing_url"));
                 companyEntity.setEnabled(true);
 
                 CompanyEntity savedCompany = companyRepository.save(companyEntity);
 
-                ParserTemplateEntity parserTemplateEntity = new ParserTemplateEntity();
-                parserTemplateEntity.setCompany(savedCompany);
+                ParserTemplateEntity parserTemplateEntity = parserTemplateRepository
+                        .findByCompany(savedCompany)
+                        .orElseGet(() -> {
+                            ParserTemplateEntity newEntity = new ParserTemplateEntity();
+                            newEntity.setCompany(savedCompany);
+                            return newEntity;
+                        });
                 parserTemplateEntity.setConfig(template);
-
                 parserTemplateRepository.save(parserTemplateEntity);
             }
         } catch (IOException exception) {
