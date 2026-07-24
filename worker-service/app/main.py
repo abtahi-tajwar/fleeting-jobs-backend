@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
@@ -48,8 +49,10 @@ async def scrape_job_list(request: ScrapeJobRequest):
     url = request.listing_url
     company_id = request.company_id
 
+    print(f"{company_id} scraped {url}")
+    print(f"{template}")
     asyncio.create_task(
-        job_parser.parse_jobs(url, template)
+        job_parser.parse_jobs(company_id, template)
     )
 
     return 0

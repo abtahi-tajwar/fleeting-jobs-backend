@@ -1,6 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.company.entity;
 
 import com.fleetingtrails.fleetingjobsbackend.jobs.entity.JobEntity;
+import com.fleetingtrails.fleetingjobsbackend.parser.entity.ParserTemplateEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,4 +39,6 @@ public class CompanyEntity {
     @CreationTimestamp
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
+    @OneToOne(mappedBy = "company")
+    private ParserTemplateEntity parserTemplate;
 }
