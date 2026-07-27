@@ -1,6 +1,8 @@
 import asyncio
 import math
-from playwright.async_api import async_playwright
+import time
+
+from playwright.async_api import async_playwright, Page
 from bs4 import BeautifulSoup
 
 from app.common.rabbit.rabbit_service import rabbit_service
@@ -120,6 +122,55 @@ class JobParser:
         description = content_soup.select_one(
             config.job_details.description
         ).text.strip()
+
+    async def extract_job_details_without_parser(self, url: str):
+        await self.page.goto(url)
+        await self.wait_for_content_to_stabilize(self.page)
+        content = await self.page.content()
+        content_soup = BeautifulSoup(content, "lxml")
+        return content_soup.get_text(separator="\n", strip=True)
+
+
+
+    async def wait_for_content_to_stabilize(
+            self,
+            page: Page,
+            timeout: int = 10000,
+            interval: int = 300,
+            stable_iterations: int = 3,
+            tolerance: int = 10,
+            min_text_length: int = 500,
+    ):
+        start = time.time()
+
+        previous_length = 0
+        stable_count = 0
+
+        while (time.time() - start) * 1000 < timeout:
+            current_length = await page.evaluate(
+                "() => document.body?.innerText.length ?? 0"
+            )
+
+            if current_length < min_text_length:
+                stable_count = 0
+                previous_length = current_length
+                page.wait_for_timeout(interval)
+                continue
+
+            if abs(current_length - previous_length) <= tolerance:
+                stable_count += 1
+
+                if stable_count >= stable_iterations:
+                    return
+            else:
+                stable_count = 0
+                previous_length = current_length
+
+            await page.wait_for_timeout(interval)
+
+        raise TimeoutError(
+            f"Content did not stabilize within {timeout} ms."
+        )
 
 
 job_parser = JobParser()
