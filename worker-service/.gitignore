@@ -21,3 +21,6 @@ playwright/.cache/
 
 # macOS
 .DS_Store
+
+# env
+.env
