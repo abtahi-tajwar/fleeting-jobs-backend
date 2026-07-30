@@ -1,0 +1,18 @@
+package com.fleetingtrails.fleetingjobsbackend.user.dto;
+
+import lombok.Data;
+
+@Data
+public class UserCreateDto {
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phone;
+    private String linkedin;
+    private String github;
+    private String portfolioWebsite;
+    private String city;
+    private String province;
+    private String country;
+    private String summary;
+}
