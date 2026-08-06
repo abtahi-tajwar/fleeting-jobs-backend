@@ -1,5 +1,6 @@
 package com.fleetingtrails.fleetingjobsbackend.user.dto;
 
+import com.fleetingtrails.fleetingjobsbackend.user.enums.Role;
 import lombok.Data;
 import java.time.LocalDateTime;
 
@@ -17,6 +18,8 @@ public class UserResponseDto {
     private String province;
     private String country;
     private String summary;
+    private Role role;
+    private String password;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
