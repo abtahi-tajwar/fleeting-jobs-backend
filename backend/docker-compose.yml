@@ -14,30 +14,6 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
 
-  ollama:
-    image: ollama/ollama:latest
-    container_name: fleeting-ollama
-    ports:
-      - "11434:11434"
-
-    volumes:
-      - ollama-data:/root/.ollama
-
-    restart: unless-stopped
-
-  ollama-init:
-    image: ollama/ollama:latest
-    container_name: fleeting-ollama-init
-    depends_on:
-      - ollama
-    entrypoint: >
-      sh -c "
-      sleep 5 &&
-      ollama pull qwen3:4b
-      "
-
-    environment:
-      OLLAMA_HOST: http://ollama:11434
   rabbitmq:
     image: rabbitmq:4-management
     container_name: fleeting-rabbitmq
@@ -55,5 +31,4 @@ services:
 
 volumes:
   postgres-data:
-  ollama-data:
   rabbitmq-data:

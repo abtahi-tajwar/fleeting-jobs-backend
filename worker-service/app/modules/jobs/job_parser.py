@@ -128,7 +128,8 @@ class JobParser:
         await self.wait_for_content_to_stabilize(self.page)
         content = await self.page.content()
         content_soup = BeautifulSoup(content, "lxml")
-        return content_soup.get_text(separator="\n", strip=True)
+        # return content_soup.get_text(separator="\n", strip=True)
+        return str(content_soup.prettify())
 
 
 

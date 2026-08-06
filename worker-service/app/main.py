@@ -8,7 +8,7 @@ from starlette.responses import StreamingResponse
 from app.common.rabbit.rabbit_config import REQUEST_JOB_DETAILS_QUEUE
 from app.common.rabbit.rabbit_service import rabbit_service
 from app.modules.document.service.document_service import document_service
-from app.modules.document.types.GenerateResumeFromUrl import GenerateResumeFromUrl
+from app.modules.document.types.GenerateResumeFromUrl import GenerateResumeFromUrl, GenerateResumeFromDescription
 from app.modules.jobs.jobs_callback import job_details_fetch_callback
 from app.modules.jobs.job_parser import job_parser
 from app.modules.document.generate_resume_pdf import pdf_service
@@ -52,11 +52,24 @@ async def scrape_job_list(request: ScrapeJobRequest):
 
     return 0
 
-@app.post("/documents/test-resume.pdf")
+@app.post("/documents/generate/from_url/resume.pdf")
 async def route_generate_resume_from_url(request: GenerateResumeFromUrl):
     url = request.url
 
     pdf_buffer = await document_service.generate_resume_from_url(url)
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": 'attachment; filename="resume.pdf"'
+        }
+    )
+
+@app.post("/documents/generate/from_description/resume.pdf")
+async def route_generate_resume_from_url(request: GenerateResumeFromDescription):
+    desc = request.description
+
+    pdf_buffer = await document_service.generate_resume_from_description(desc)
     return StreamingResponse(
         pdf_buffer,
         media_type="application/pdf",
