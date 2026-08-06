@@ -18,12 +18,15 @@ from reportlab.platypus import (
 )
 from reportlab.platypus import HRFlowable
 
+from app.modules.document.types.ResumeGenerationData import ResumeGenerationData
+
+
 class PdfService:
     BLUE = "#1F5A94"
     DARK = "#1F2937"
     MUTED = "#4B5563"
 
-    def generate_resume(self) -> BytesIO:
+    def generate_resume(self, data : ResumeGenerationData) -> BytesIO:
         buffer = BytesIO()
 
         document = SimpleDocTemplate(
@@ -59,16 +62,12 @@ class PdfService:
         story.append(self._section("Technical Skills", styles))
         story.append(self._label_value(
             "Tools &amp; Technologies",
-            "Java, Python, JavaScript, Spring Boot, React, Next.js, "
-            "SvelteKit, ASP.NET, PostgreSQL, RabbitMQ, Docker, Redis, "
-            "AI Engineering, Prompt Engineering, LLM Integration, "
-            "Playwright, Git",
+            ", ".join(data.skills.tools_technologies),
             styles,
         ))
         story.append(self._label_value(
             "Soft Skills",
-            "Communication, Problem Solving, Critical Analysis, Curiosity, "
-            "Collaboration, Adaptability, Detail Oriented",
+            ", ".join(data.skills.soft_skills),
             styles,
         ))
 

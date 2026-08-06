@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ResumeFromLinkRequestDto {
-    private String url;
+public class ResumeFromDescriptionRequestDto {
+    private String description;
 }
