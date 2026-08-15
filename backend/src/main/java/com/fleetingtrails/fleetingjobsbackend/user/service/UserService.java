@@ -8,6 +8,7 @@ import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
 import com.fleetingtrails.fleetingjobsbackend.user.mapper.UserMapper;
 import com.fleetingtrails.fleetingjobsbackend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,12 +36,12 @@ public class UserService {
 
     @Transactional
     public UserResponseDto createUser(UserCreateDto userCreateDto) {
-        // Validation: Check if email already exists
         if (userRepository.findByEmail(userCreateDto.getEmail()).isPresent()) {
             throw new ResourceNotFoundException("Email already exists: " + userCreateDto.getEmail());
         }
 
         UserEntity userEntity = userMapper.toEntity(userCreateDto);
+        userEntity.setPassword(new BCryptPasswordEncoder().encode(userEntity.getPassword()));
         UserEntity savedUser = userRepository.save(userEntity);
         return userMapper.toResponseDto(savedUser);
     }

@@ -1,6 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.user.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import com.fleetingtrails.fleetingjobsbackend.user.enums.Role;
 
 @Entity
 @Table(name = "users")
@@ -45,6 +47,13 @@ public class UserEntity {
 
     @Column(columnDefinition = "TEXT")
     private String summary;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER;
+
+    @Column(nullable = false)
+    private String password;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
