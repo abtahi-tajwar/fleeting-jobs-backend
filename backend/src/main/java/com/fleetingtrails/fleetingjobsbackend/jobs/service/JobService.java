@@ -12,6 +12,7 @@ import com.fleetingtrails.fleetingjobsbackend.jobs.dto.JobListItemDto;
 import com.fleetingtrails.fleetingjobsbackend.jobs.entity.JobEntity;
 import com.fleetingtrails.fleetingjobsbackend.jobs.mapper.JobMapper;
 import com.fleetingtrails.fleetingjobsbackend.jobs.repository.JobRepository;
+
 import com.fleetingtrails.fleetingjobsbackend.parser.dto.ScrapeJobListBodyDto;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.MediaType;

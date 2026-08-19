@@ -10,4 +10,6 @@ public class ScrapeJobListBodyDto {
     Long company_id;
     String listing_url;
     ParserTemplateType parser_template;
+
+    public ScrapeJobListBodyDto () { }
 }

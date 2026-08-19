@@ -1,0 +1,22 @@
+package com.fleetingtrails.fleetingjobsbackend.profile._submodules.skill.dto;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+@Data
+public class SkillCreateDto {
+    @NotNull
+    private String name;
+
+    private String category;
+
+    @NotNull
+    @Min(1) @Max(10)
+    private Integer strength;
+
+    private Double yearsExperience;
+
+    private String notes;
+}
