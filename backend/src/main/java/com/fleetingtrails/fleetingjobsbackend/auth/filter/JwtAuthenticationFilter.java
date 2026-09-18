@@ -1,6 +1,8 @@
 package com.fleetingtrails.fleetingjobsbackend.auth.filter;
 
 import com.fleetingtrails.fleetingjobsbackend.auth.service.JwtService;
+import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
+import com.fleetingtrails.fleetingjobsbackend.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -53,6 +56,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String userEmail = jwtService.extractUsername(jwt);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserEntity user = userRepository.findByEmail(userEmail).orElse(null);
+            if (user != null && user.getOtp() != null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

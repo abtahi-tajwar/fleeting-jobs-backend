@@ -2,7 +2,7 @@
 
 This file is the **application-level architecture context** for the Fleeting Jobs backend. Any AI agent working on this codebase must read this file first, then read the relevant module context files before making changes.
 
-**Last updated:** 2026-08-19
+**Last updated:** 2026-08-19 (auth OTP / first-login password setup)
 
 ---
 
@@ -211,7 +211,9 @@ Do not put business rules here.
 
 ### `auth` — authentication and authorization
 
-Purpose: login, JWT issue/validation, Spring Security filter chain, admin user seeding.
+Purpose: login, first-login password setup (OTP), JWT issue/validation, Spring Security filter chain, admin user seeding.
+
+See `agent-context/auth/context.md` for the full OTP / set-password flow.
 
 Notable packages (no entity/repository of its own; users live in `user`):
 
@@ -229,13 +231,17 @@ auth/
 - All other HTTP requests require a valid JWT (`Authorization: Bearer ...`)
 - Stateless sessions (`SessionCreationPolicy.STATELESS`)
 - CSRF disabled
-- Passwords hashed with BCrypt
+- Permanent password and OTP are both hashed with BCrypt on `UserEntity`
+- Seeded users receive OTP only (`password` is null) and must call set-password before they can use protected APIs
+- Login with OTP returns `requiresPasswordSetup: true` and **no JWT**
+- `POST /auth/set-password` takes `{ email, otp, password }`, clears OTP, stores the new password, and issues a JWT
 - `AuthService` implements `UserDetailsService` and authenticates by email
 - Roles exist on `UserEntity` (`USER`, `ADMIN`) but request authorization is currently authenticated-vs-public, not role-based method security
 
 API:
 
-- `POST /auth/login` → `{ token, userId, email, role }`
+- `POST /auth/login` → `{ token, userId, email, role, requiresPasswordSetup }`
+- `POST /auth/set-password` → `{ token, userId, email, role, requiresPasswordSetup: false }`
 
 ### `user` — platform users regardless of role
 
@@ -244,8 +250,9 @@ Purpose: CRUD for users (job seekers and admins). Identity and contact/profile h
 - Entity: `UserEntity` → table `users`
 - Roles: `Role.USER`, `Role.ADMIN` (default `USER`)
 - Unique email
-- Create hashes password with BCrypt
-- MapStruct ignores password on response DTOs
+- `password` (nullable until first set) and `otp` (cleared after first password set); both BCrypt hashed
+- Create hashes password with BCrypt and leaves `otp` null
+- MapStruct ignores password on response DTOs and ignores otp on create/update
 
 API (`/users`):
 
@@ -403,7 +410,7 @@ Do not "fix" one style to match the other unless asked.
 - Mapper interfaces live in the module `mapper/` package.
 - Always: `@Mapper(componentModel = "spring")`
 - Typical methods: `toEntity(CreateDto)`, `to*Dto(Entity)`, `updateEntityFromDto(UpdateDto, @MappingTarget Entity)`
-- Ignore generated / sensitive fields (`id`, timestamps, `password`, `role`) as the existing mapper does.
+- Ignore generated / sensitive fields (`id`, timestamps, `password`, `otp`, `role`) as the existing mapper does.
 - Implementations are generated at compile time. Do not hand-write `*MapperImpl`.
 
 Lombok and MapStruct both run as annotation processors. Keep `lombok-mapstruct-binding` in `pom.xml`.
@@ -478,10 +485,11 @@ Messages from worker for new listings use `company_id` (snake_case field). Prese
 ## Security
 
 - JWT secret and expiration from configuration
-- Login authenticates email + password via `AuthenticationManager`
+- Login compares the submitted secret against hashed `password`, then hashed `otp`, using `PasswordEncoder`
+- OTP login does not issue a JWT. `JwtAuthenticationFilter` also refuses to authenticate a user who still has an OTP set
 - `JwtAuthenticationFilter` skips `/auth/**` and `POST /users`, otherwise reads Bearer token, loads user by email, sets `SecurityContext`
 - CORS allows the local Vite origins only
-- Circular references are currently allowed (`spring.main.allow-circular-references=true`) because `AuthService` lazily injects `AuthenticationManager`
+- `spring.main.allow-circular-references=true` remains in config from the previous AuthenticationManager cycle; login no longer uses `AuthenticationManager`
 
 Do not weaken public-endpoint rules or JWT validation without an explicit request.
 
@@ -491,7 +499,7 @@ Do not weaken public-endpoint rules or JWT validation without an explicit reques
 
 On application startup, `CommandLineRunner` beans seed data:
 
-- `DatabaseSeeder` → `AuthSeeder` seeds admin `admin@test.com` / `password123` if missing
+- `DatabaseSeeder` → `AuthSeeder` seeds admin `admin@test.com` with OTP `password123` if missing (`password` null until set-password)
 - `SeedRunner` → `CompanySeeder` upserts companies + parser templates from CSV/JSON
 
 Keep seed data under `src/main/resources/seeds/`. Idempotent upserts (find-or-create) are required.
@@ -514,6 +522,8 @@ Keep seed data under `src/main/resources/seeds/`. Idempotent upserts (find-or-cr
 
 ## Current architectural snapshot (as of 2026-08-19)
 
+Seeded admin first-login uses OTP (`users.otp`) and `POST /auth/set-password` before a JWT is issued.
+
 Implemented business modules: `auth`, `user`, `profile` (5 submodules), `company`, `parser`, `jobs`, `document`.
 
 Not yet present:
@@ -529,4 +539,4 @@ Known coupling to preserve until a dedicated refactor is requested:
 - `JobService` depends on `CompanyRepository` and worker/Rabbit helpers
 - `ParserTemplateService` depends on `CompanyRepository`
 - Profile submodule services depend on `UserRepository`
-- `AuthService` depends on `UserRepository` / `UserMapper`
+- `AuthService` depends on `UserRepository` and `PasswordEncoder`

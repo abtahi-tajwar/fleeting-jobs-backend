@@ -1,0 +1,33 @@
+{
+    "company": "Deloitte",
+    "version": 1,
+    "start_url": "https://careers.deloitte.ca/go/Studentnew-graduate-opportunities/984400/",
+    "posting_count": {
+        "selector": ".jobCount"
+    },
+    "listing": {
+        "container": "div.jobSearchResults table tbody tr.jobResultItem",
+        "fields": {
+            "title": {
+                "type": "text",
+                "selector": ".jobTitle a"
+            },
+            "url": {
+                "type": "attribute",
+                "attribute": "href",
+                "selector": ".jobTitle a",
+                "absolute": true
+            }
+        }
+    },
+    "job_details": {
+        "description": ".jobDescription"
+    },
+    "pagination": {
+        "type": "url_parameter",
+        "parameter": "pageNumber",
+        "start": 0,
+        "increment": 1,
+        "page_size": 25
+    }
+}

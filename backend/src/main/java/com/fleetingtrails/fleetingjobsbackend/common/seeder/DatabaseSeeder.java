@@ -1,7 +1,6 @@
 package com.fleetingtrails.fleetingjobsbackend.common.seeder;
 
 import com.fleetingtrails.fleetingjobsbackend.auth.seeder.AuthSeeder;
-import com.fleetingtrails.fleetingjobsbackend.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -15,11 +14,8 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("Seeding database...");
-        // Seeds an Admin user: admin@test.com / password123
+        // Seeds an Admin user with OTP: admin@test.com / password123
         authSeeder.seedUser("admin@test.com", "password123");
-
-        // For regular use calling :
-        // authService.seedUser("user@test.com", "password123");
         System.out.println("Seeding complete.");
     }
 }

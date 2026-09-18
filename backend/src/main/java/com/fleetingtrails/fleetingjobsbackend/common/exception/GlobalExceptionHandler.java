@@ -3,6 +3,7 @@ package com.fleetingtrails.fleetingjobsbackend.common.exception;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +19,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<APIErrorResponse> handleResourceNotFound (ResourceNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(APIErrorResponse.of(ex.getMessage()));
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<APIErrorResponse> handleBadCredentials (BadCredentialsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(APIErrorResponse.of(ex.getMessage()));
     }
 

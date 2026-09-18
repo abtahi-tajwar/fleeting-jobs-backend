@@ -52,8 +52,11 @@ public class UserEntity {
     @Column(nullable = false)
     private Role role = Role.USER;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
+
+    @Column(name = "otp")
+    private String otp;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

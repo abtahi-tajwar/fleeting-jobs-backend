@@ -2,86 +2,115 @@ package com.fleetingtrails.fleetingjobsbackend.auth.service;
 
 import com.fleetingtrails.fleetingjobsbackend.auth.dto.AuthResponseDto;
 import com.fleetingtrails.fleetingjobsbackend.auth.dto.LoginRequestDto;
-import com.fleetingtrails.fleetingjobsbackend.common.exception.ResourceNotFoundException;
+import com.fleetingtrails.fleetingjobsbackend.auth.dto.SetPasswordRequestDto;
 import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
-import com.fleetingtrails.fleetingjobsbackend.user.mapper.UserMapper;
 import com.fleetingtrails.fleetingjobsbackend.user.repository.UserRepository;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 
 @Service
 public class AuthService implements UserDetailsService {
 
+    private static final String UNUSABLE_PASSWORD = "{noop}LOCKED";
+
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
-    private final UserMapper userMapper;
-
+    private final PasswordEncoder passwordEncoder;
 
     public AuthService(UserRepository userRepository,
                        JwtService jwtService,
-                       @Lazy AuthenticationManager authenticationManager,
-                       UserMapper userMapper) {
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
-        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
-
 
     public AuthResponseDto login(LoginRequestDto request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String jwt = jwtService.generateToken(userDetails);
-
         UserEntity user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
 
-        AuthResponseDto response = new AuthResponseDto();
-        response.setToken(jwt);
-        response.setUserId(user.getId());
-        response.setEmail(user.getEmail());
-        response.setRole(user.getRole());
-        return response;
+        if (matches(request.getPassword(), user.getPassword())) {
+            return toAuthenticatedResponse(user);
+        }
+
+        if (matches(request.getPassword(), user.getOtp())) {
+            return toPasswordSetupRequiredResponse(user);
+        }
+
+        throw new BadCredentialsException("Invalid email or password");
     }
 
+    @Transactional
+    public AuthResponseDto setPassword(SetPasswordRequestDto request) {
+        UserEntity user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadCredentialsException("Invalid email or OTP"));
 
-    public void seedUser(String email, String rawPassword) {
-        if (userRepository.findByEmail(email).isPresent()) return;
+        if (user.getOtp() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Password has already been set for this account"
+            );
+        }
 
-        UserEntity user = new UserEntity();
-        user.setEmail(email);
-        user.setFirstName("Admin");
-        user.setLastName("User");
-        user.setPassword(new BCryptPasswordEncoder().encode(rawPassword));
-        user.setRole(com.fleetingtrails.fleetingjobsbackend.user.enums.Role.ADMIN);
+        if (!matches(request.getOtp(), user.getOtp())) {
+            throw new BadCredentialsException("Invalid email or OTP");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setOtp(null);
         userRepository.save(user);
-        System.out.println("Seeded admin user: " + email);
-    }
 
+        return toAuthenticatedResponse(user);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        String password = user.getPassword() != null ? user.getPassword() : UNUSABLE_PASSWORD;
+
         return new User(
                 user.getEmail(),
-                user.getPassword(),
+                password,
                 new ArrayList<>()
         );
+    }
+
+    private boolean matches(String raw, String encoded) {
+        return raw != null && encoded != null && passwordEncoder.matches(raw, encoded);
+    }
+
+    private AuthResponseDto toAuthenticatedResponse(UserEntity user) {
+        UserDetails userDetails = loadUserByUsername(user.getEmail());
+        String jwt = jwtService.generateToken(userDetails);
+
+        AuthResponseDto response = new AuthResponseDto();
+        response.setToken(jwt);
+        response.setUserId(user.getId());
+        response.setEmail(user.getEmail());
+        response.setRole(user.getRole());
+        response.setRequiresPasswordSetup(false);
+        return response;
+    }
+
+    private AuthResponseDto toPasswordSetupRequiredResponse(UserEntity user) {
+        AuthResponseDto response = new AuthResponseDto();
+        response.setToken(null);
+        response.setUserId(user.getId());
+        response.setEmail(user.getEmail());
+        response.setRole(user.getRole());
+        response.setRequiresPasswordSetup(true);
+        return response;
     }
 }
