@@ -1,5 +1,6 @@
 package com.fleetingtrails.fleetingjobsbackend.auth.service;
 
+import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -32,27 +33,27 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserEntity userDetails) {
         Map<String, Object> claims = new HashMap<>();
         // Add the User ID and Role to the token so we don't have to query DB every time
-        claims.put("role", userDetails.getAuthorities().stream().findFirst().orElse(null));
+//        claims.put("role", userDetails.getAuthorities().stream().findFirst().orElse(null));
         return generateToken(claims, userDetails);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    public String generateToken(Map<String, Object> extraClaims, UserEntity userDetails) {
         return Jwts
                 .builder()
                 .claims(extraClaims)
-                .subject(userDetails.getUsername())
+                .subject(userDetails.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSigningKey())
                 .compact();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isTokenValid(String token, UserEntity userEntity) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (username.equals(userEntity.getEmail())) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

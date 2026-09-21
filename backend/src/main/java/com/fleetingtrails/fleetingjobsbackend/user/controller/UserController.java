@@ -6,10 +6,14 @@ import com.fleetingtrails.fleetingjobsbackend.common.response.APIPostResponse;
 import com.fleetingtrails.fleetingjobsbackend.user.dto.UserCreateDto;
 import com.fleetingtrails.fleetingjobsbackend.user.dto.UserResponseDto;
 import com.fleetingtrails.fleetingjobsbackend.user.dto.UserUpdateDto;
+import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
+import com.fleetingtrails.fleetingjobsbackend.user.mapper.UserMapper;
 import com.fleetingtrails.fleetingjobsbackend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +24,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @PostMapping
     public ResponseEntity<APIPostResponse<UserResponseDto>> createUser(@RequestBody UserCreateDto userCreateDto) {
@@ -33,6 +38,13 @@ public class UserController {
         List<UserResponseDto> users = userService.getAllUsers();
         APIListResponse<UserResponseDto> response = APIListResponse.success(users);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserResponseDto> getProfile (
+            @AuthenticationPrincipal UserEntity user
+    ) {
+        return ResponseEntity.ok(userMapper.toResponseDto(user));
     }
 
     @GetMapping("/{id}")

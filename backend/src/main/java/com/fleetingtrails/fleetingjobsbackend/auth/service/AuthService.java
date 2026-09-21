@@ -19,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 
 @Service
-public class AuthService implements UserDetailsService {
+public class AuthService {
 
     private static final String UNUSABLE_PASSWORD = "{noop}LOCKED";
 
@@ -73,18 +73,14 @@ public class AuthService implements UserDetailsService {
         return toAuthenticatedResponse(user);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//    @Override
+    public UserEntity loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         String password = user.getPassword() != null ? user.getPassword() : UNUSABLE_PASSWORD;
 
-        return new User(
-                user.getEmail(),
-                password,
-                new ArrayList<>()
-        );
+        return user;
     }
 
     private boolean matches(String raw, String encoded) {
@@ -92,7 +88,7 @@ public class AuthService implements UserDetailsService {
     }
 
     private AuthResponseDto toAuthenticatedResponse(UserEntity user) {
-        UserDetails userDetails = loadUserByUsername(user.getEmail());
+        UserEntity userDetails = loadUserByUsername(user.getEmail());
         String jwt = jwtService.generateToken(userDetails);
 
         AuthResponseDto response = new AuthResponseDto();
