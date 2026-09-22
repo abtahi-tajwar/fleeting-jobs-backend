@@ -1,5 +1,6 @@
 package com.fleetingtrails.fleetingjobsbackend.user.entity;
 
+import com.fleetingtrails.fleetingjobsbackend.auth.entity.RoleEntity;
 import jakarta.persistence.*;
 import jakarta.persistence.Column;
 import lombok.Data;
@@ -9,7 +10,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import com.fleetingtrails.fleetingjobsbackend.user.enums.Role;
 
 @Entity
 @Table(name = "users")
@@ -48,9 +48,9 @@ public class UserEntity {
     @Column(columnDefinition = "TEXT")
     private String summary;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role = Role.USER;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private RoleEntity role;
 
     @Column(nullable = true)
     private String password;

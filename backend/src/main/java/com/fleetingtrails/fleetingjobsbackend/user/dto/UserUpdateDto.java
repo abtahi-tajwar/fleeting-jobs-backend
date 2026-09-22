@@ -1,6 +1,6 @@
 package com.fleetingtrails.fleetingjobsbackend.user.dto;
 
-import com.fleetingtrails.fleetingjobsbackend.user.enums.Role;
+import com.fleetingtrails.fleetingjobsbackend.auth.entity.RoleEntity;
 import lombok.Data;
 
 @Data
@@ -16,6 +16,6 @@ public class UserUpdateDto {
     private String province;
     private String country;
     private String summary;
-    private Role role;
+    private RoleEntity role;
     private String password;
 }

@@ -1,0 +1,17 @@
+{
+  "SUPER_ADMIN": {
+    "USER": {
+      "CREATE": true,
+      "READ": true,
+      "UPDATE": true,
+      "DELETE": true,
+      "UPDATE_STATUS": true
+    }
+  },
+  "SUBSCRIBER": {
+    "PROFILE": {
+      "CREATE": true,
+      "READ_OWN": true
+    }
+  }
+}

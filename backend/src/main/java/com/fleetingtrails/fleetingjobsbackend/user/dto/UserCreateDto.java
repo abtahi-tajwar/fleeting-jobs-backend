@@ -1,6 +1,6 @@
 package com.fleetingtrails.fleetingjobsbackend.user.dto;
 
-import com.fleetingtrails.fleetingjobsbackend.user.enums.Role;
+import com.fleetingtrails.fleetingjobsbackend.auth.entity.RoleEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -28,5 +28,5 @@ public class UserCreateDto {
     private String province;
     private String country;
     private String summary;
-    private Role role;
+    private RoleEntity role;
 }

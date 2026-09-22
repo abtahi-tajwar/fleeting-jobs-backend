@@ -1,6 +1,6 @@
 package com.fleetingtrails.fleetingjobsbackend.auth.dto;
 
-import com.fleetingtrails.fleetingjobsbackend.user.enums.Role;
+import com.fleetingtrails.fleetingjobsbackend.auth.entity.RoleEntity;
 import lombok.Data;
 
 @Data
@@ -8,6 +8,6 @@ public class AuthResponseDto {
     private String token;
     private Long userId;
     private String email;
-    private Role role;
+    private RoleEntity role;
     private boolean requiresPasswordSetup;
 }

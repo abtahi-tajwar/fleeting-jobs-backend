@@ -2,7 +2,7 @@
 
 This file is the **application-level architecture context** for the Fleeting Jobs backend. Any AI agent working on this codebase must read this file first, then read the relevant module context files before making changes.
 
-**Last updated:** 2026-08-19 (auth OTP / first-login password setup)
+**Last updated:** 2026-09-21 (roles/permissions tables + AppModule enum)
 
 ---
 
@@ -211,19 +211,22 @@ Do not put business rules here.
 
 ### `auth` — authentication and authorization
 
-Purpose: login, first-login password setup (OTP), JWT issue/validation, Spring Security filter chain, admin user seeding.
+Purpose: login, first-login password setup (OTP), JWT issue/validation, Spring Security filter chain, RBAC role/permission catalog, admin user seeding.
 
-See `agent-context/auth/context.md` for the full OTP / set-password flow.
+See `agent-context/auth/context.md` for OTP / set-password and the roles/permissions seed.
 
-Notable packages (no entity/repository of its own; users live in `user`):
+Notable packages (users still live in `user`; roles/permissions live here):
 
 ```
 auth/
-├── config/SecurityConfig.java
+├── config/SecurityConfig.java, PasswordConfig.java
 ├── controller/AuthController.java
 ├── dto/
+├── entity/RoleEntity.java, PermissionEntity.java
+├── enums/AppModule.java
 ├── filter/JwtAuthenticationFilter.java
-├── seeder/AuthSeeder.java
+├── repository/RoleRepository.java, PermissionRepository.java
+├── seeder/AuthSeeder.java, PermissionSeeder.java
 └── service/AuthService.java, JwtService.java
 ```
 
@@ -236,7 +239,9 @@ auth/
 - Login with OTP returns `requiresPasswordSetup: true` and **no JWT**
 - `POST /auth/set-password` takes `{ email, otp, password }`, clears OTP, stores the new password, and issues a JWT
 - `AuthService` implements `UserDetailsService` and authenticates by email
-- Roles exist on `UserEntity` (`USER`, `ADMIN`) but request authorization is currently authenticated-vs-public, not role-based method security
+- `UserEntity.role` is still the old enum (`USER`, `ADMIN`) used by login responses. Endpoint authorization is still authenticated-vs-public, not yet enforced from the `roles` / `permissions` tables
+- RBAC catalog: `roles` + `permissions`, seeded from `src/main/resources/seeds/auth/roles.json` and `src/main/resources/seeds/auth/permissions.json`
+- Module/submodule names come from `AppModule` / `AppModule.Submodule`
 
 API:
 
@@ -437,7 +442,11 @@ users 1──* awards
 
 companies 1──* jobs
 companies 1──1 parser_templates
+
+roles 1──* permissions
 ```
+
+`users.role` is still the `USER`/`ADMIN` enum. Users are not yet foreign-keyed to `roles`.
 
 ---
 
@@ -499,10 +508,12 @@ Do not weaken public-endpoint rules or JWT validation without an explicit reques
 
 On application startup, `CommandLineRunner` beans seed data:
 
-- `DatabaseSeeder` → `AuthSeeder` seeds admin `admin@test.com` with OTP `password123` if missing (`password` null until set-password)
+- `DatabaseSeeder` → `AuthSeeder.seedRoles()` from `src/main/resources/seeds/auth/roles.json`
+- `DatabaseSeeder` → `PermissionSeeder.seedPermissions()` from `src/main/resources/seeds/auth/permissions.json` (roles must already exist)
+- `DatabaseSeeder` → `AuthSeeder.seedUser(...)` seeds admin `admin@test.com` with OTP `password123` if missing (`password` null until set-password)
 - `SeedRunner` → `CompanySeeder` upserts companies + parser templates from CSV/JSON
 
-Keep seed data under `src/main/resources/seeds/`. Idempotent upserts (find-or-create) are required.
+Keep seed data under `src/main/resources/seeds/`. Idempotent skip-if-exists inserts are required.
 
 ---
 
@@ -520,9 +531,11 @@ Keep seed data under `src/main/resources/seeds/`. Idempotent upserts (find-or-cr
 
 ---
 
-## Current architectural snapshot (as of 2026-08-19)
+## Current architectural snapshot (as of 2026-09-21)
 
 Seeded admin first-login uses OTP (`users.otp`) and `POST /auth/set-password` before a JWT is issued.
+
+RBAC catalog tables (`roles`, `permissions`) are seeded from `seeds/auth/roles.json` and `seeds/auth/permissions.json`. Endpoint checks against those tables are not wired yet.
 
 Implemented business modules: `auth`, `user`, `profile` (5 submodules), `company`, `parser`, `jobs`, `document`.
 
@@ -530,7 +543,7 @@ Not yet present:
 
 - Cover-letter generation endpoints (document module currently does resume PDF only)
 - A parent `ProfileEntity` / `/profiles` resource
-- Role-based authorization on endpoints
+- Role-based authorization on endpoints (tables exist; not enforced on requests yet)
 - Flyway migration files
 - Pagination on list endpoints (lists currently return full collections)
 

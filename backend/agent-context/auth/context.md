@@ -1,28 +1,103 @@
 # Auth module context
 
-**Last updated:** 2026-08-19
+**Last updated:** 2026-09-21
 
 Read `agent-context/architecture.md` first. Update this file after auth/security changes.
 
 ## Purpose
 
-Handles authentication, JWT issue/validation, Spring Security, and first-login password setup for seeded users. Users themselves live in the `user` module. Auth has no entity or repository.
+Handles authentication, JWT issue/validation, Spring Security, first-login password setup for seeded users, and the RBAC role/permission catalog. Users themselves live in the `user` module.
 
 ## Package layout
 
 ```
 auth/
-├── config/SecurityConfig.java
+├── config/SecurityConfig.java, PasswordConfig.java
 ├── controller/AuthController.java
 ├── dto/
 │   ├── AuthResponseDto.java
 │   ├── LoginRequestDto.java
 │   └── SetPasswordRequestDto.java
+├── entity/
+│   ├── RoleEntity.java
+│   └── PermissionEntity.java
+├── enums/AppModule.java
 ├── filter/JwtAuthenticationFilter.java
-├── seeder/AuthSeeder.java
+├── repository/
+│   ├── RoleRepository.java
+│   └── PermissionRepository.java
+├── seeder/
+│   ├── AuthSeeder.java
+│   └── PermissionSeeder.java
 └── service/
     ├── AuthService.java
     └── JwtService.java
+```
+
+## Roles and permissions
+
+Tables:
+
+| Table | Entity | Purpose |
+|---|---|---|
+| `roles` | `RoleEntity` | Named roles from `seeds/auth/roles.json` (e.g. `SUPER_ADMIN`, `ADMIN`, `SUBSCRIBER`). Unique `name`. |
+| `permissions` | `PermissionEntity` | One grant per role + module + optional submodule + action. `permitted` is the JSON boolean. |
+
+`roles 1──* permissions` (`role_id`, cascade + orphanRemoval). Users have `role_id` → `RoleEntity`. The seeded admin is assigned `SUPER_ADMIN`.
+
+### `AppModule` enum
+
+`auth.enums.AppModule` is the catalog of project modules and submodules. JSON keys must match enum names.
+
+Modules: `AUTH`, `USER`, `PROFILE`, `COMPANY`, `PARSER`, `JOBS`, `DOCUMENT`.
+
+Profile submodules (`AppModule.Submodule`): `EDUCATION`, `WORK_EXPERIENCE`, `SKILL`, `CERTIFICATION`, `AWARD`.
+
+If a new business module or profile submodule is added, update this enum **and** `permissions.json`.
+
+### `permissions.json`
+
+Path: `src/main/resources/seeds/auth/permissions.json`
+
+```
+Role:
+  Module:
+    Action: true
+    OptionalSubmodule:
+      Action: true
+```
+
+`true` means permitted. Example with a submodule:
+
+```json
+{
+  "SUBSCRIBER": {
+    "PROFILE": {
+      "READ_OWN": true,
+      "EDUCATION": {
+        "CREATE": true,
+        "READ": true
+      }
+    }
+  }
+}
+```
+
+Parser rules in `PermissionSeeder.seedPermissions()`:
+
+1. Top-level keys are role names. The role must already exist (`AuthSeeder.seedRoles()` runs first).
+2. Second-level keys must be `AppModule` names.
+3. Under a module, a key is a submodule if it matches `AppModule.Submodule` for that module; otherwise it is an action whose value must be boolean.
+4. Unknown module names or unknown submodule objects fail the seed.
+
+The seeder is skip-if-exists, like `AuthSeeder.seedUser` / `seedRoles`. It looks up the role by name (roles must already exist) and saves each permission through `PermissionRepository`.
+
+`DatabaseSeeder` calls:
+
+```
+authSeeder.seedRoles();
+permissionSeeder.seedPermissions();
+authSeeder.seedUser("admin@test.com", "password123");
 ```
 
 ## Password vs OTP
@@ -74,7 +149,7 @@ Public endpoint (`/auth/**` is permitAll).
 
 After this, the old OTP cannot be used again. The user logs in with the new password.
 
-## Seeding
+## User seeding
 
 `AuthSeeder.seedUser(email, rawOtp)` creates an `ADMIN` if the email does not exist:
 
@@ -101,7 +176,7 @@ To re-test first-login on an existing database:
 - If the user still has an OTP, the filter does not set `SecurityContext` even when a Bearer token is present
 - `loadUserByUsername` uses `{noop}LOCKED` when `password` is null so Spring `User` is never given a null password
 - Login no longer uses `AuthenticationManager`; it compares secrets with `PasswordEncoder` directly
-- Roles exist (`USER`, `ADMIN`) but endpoint authorization is still authenticated-vs-public, not role-based
+- `USER` / `ADMIN` on `UserEntity` and `SUPER_ADMIN` / `SUBSCRIBER` in `roles` are currently separate. Endpoint authorization is still authenticated-vs-public, not permission-based
 
 ## API
 
