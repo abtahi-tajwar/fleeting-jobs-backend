@@ -6,33 +6,35 @@ import com.fleetingtrails.fleetingjobsbackend.profile._submodules.education.dto.
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.education.dto.EducationResponseDto;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.education.dto.EducationUpdateDto;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.education.service.EducationService;
+import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/{userId}/education")
+@RequestMapping("/profile/education")
 @RequiredArgsConstructor
 public class EducationController {
 
     private final EducationService educationService;
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<APIPostResponse<EducationResponseDto>> createEducation(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal UserEntity user,
             @Valid @RequestBody EducationCreateDto createDto) {
-        EducationResponseDto createdEducation = educationService.createEducation(userId, createDto);
+        EducationResponseDto createdEducation = educationService.createEducation(user.getId(), createDto);
         APIPostResponse<EducationResponseDto> response = APIPostResponse.success(createdEducation);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<APIListResponse<EducationResponseDto>> getEducationsByUserId(@PathVariable Long userId) {
-        List<EducationResponseDto> educations = educationService.getEducationsByUserId(userId);
+    @GetMapping("/")
+    public ResponseEntity<APIListResponse<EducationResponseDto>> getEducationsByUserId(@AuthenticationPrincipal UserEntity user) {
+        List<EducationResponseDto> educations = educationService.getEducationsByUserId(user.getId());
         APIListResponse<EducationResponseDto> response = APIListResponse.success(educations);
         return ResponseEntity.ok(response);
     }

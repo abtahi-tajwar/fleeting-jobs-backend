@@ -6,33 +6,37 @@ import com.fleetingtrails.fleetingjobsbackend.profile._submodules.award.dto.Awar
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.award.dto.AwardResponseDto;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.award.dto.AwardUpdateDto;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.award.service.AwardService;
+import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/{userId}/awards")
+@RequestMapping("/profile/awards")
 @RequiredArgsConstructor
 public class AwardController {
 
     private final AwardService awardService;
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<APIPostResponse<AwardResponseDto>> createAward(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal UserEntity user,
             @Valid @RequestBody AwardCreateDto createDto) {
-        AwardResponseDto createdAward = awardService.createAward(userId, createDto);
+        AwardResponseDto createdAward = awardService.createAward(user.getId(), createDto);
         APIPostResponse<AwardResponseDto> response = APIPostResponse.success(createdAward);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<APIListResponse<AwardResponseDto>> getAwardsByUserId(@PathVariable Long userId) {
-        List<AwardResponseDto> awards = awardService.getAwardsByUserId(userId);
+    @GetMapping("/")
+    public ResponseEntity<APIListResponse<AwardResponseDto>> getAwardsByUserId(
+            @AuthenticationPrincipal UserEntity user
+    ) {
+        List<AwardResponseDto> awards = awardService.getAwardsByUserId(user.getId());
         APIListResponse<AwardResponseDto> response = APIListResponse.success(awards);
         return ResponseEntity.ok(response);
     }

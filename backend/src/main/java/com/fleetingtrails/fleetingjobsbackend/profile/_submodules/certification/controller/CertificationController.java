@@ -6,16 +6,18 @@ import com.fleetingtrails.fleetingjobsbackend.profile._submodules.certification.
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.certification.dto.CertificationResponseDto;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.certification.dto.CertificationUpdateDto;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.certification.service.CertificationService;
+import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/{userId}/certifications")
+@RequestMapping("/profile/certifications")
 @RequiredArgsConstructor
 public class CertificationController {
 
@@ -23,16 +25,16 @@ public class CertificationController {
 
     @PostMapping
     public ResponseEntity<APIPostResponse<CertificationResponseDto>> createCertification(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal UserEntity user,
             @Valid @RequestBody CertificationCreateDto createDto) {
-        CertificationResponseDto createdCertification = certificationService.createCertification(userId, createDto);
+        CertificationResponseDto createdCertification = certificationService.createCertification(user.getId(), createDto);
         APIPostResponse<CertificationResponseDto> response = APIPostResponse.success(createdCertification);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<APIListResponse<CertificationResponseDto>> getCertificationsByUserId(@PathVariable Long userId) {
-        List<CertificationResponseDto> certifications = certificationService.getCertificationsByUserId(userId);
+    public ResponseEntity<APIListResponse<CertificationResponseDto>> getCertificationsByUserId(@AuthenticationPrincipal UserEntity user) {
+        List<CertificationResponseDto> certifications = certificationService.getCertificationsByUserId(user.getId());
         APIListResponse<CertificationResponseDto> response = APIListResponse.success(certifications);
         return ResponseEntity.ok(response);
     }

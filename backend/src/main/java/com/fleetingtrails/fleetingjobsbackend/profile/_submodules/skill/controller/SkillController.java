@@ -6,35 +6,41 @@ import com.fleetingtrails.fleetingjobsbackend.profile._submodules.skill.dto.Skil
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.skill.dto.SkillResponseDto;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.skill.dto.SkillUpdateDto;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.skill.service.SkillService;
+import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/{userId}/skills")
+@RequestMapping("/profile/skills")
 @RequiredArgsConstructor
 public class SkillController {
 
     private final SkillService skillService;
 
-    @PostMapping
+
+    @PostMapping("/")
     public ResponseEntity<APIPostResponse<SkillResponseDto>> createSkill(
-            @PathVariable Long userId,
-            @Valid @RequestBody SkillCreateDto createDto) {
-        SkillResponseDto createdSkill = skillService.createSkill(userId, createDto);
+            @Valid @RequestBody SkillCreateDto createDto,
+            @AuthenticationPrincipal UserEntity user
+    ) {
+        SkillResponseDto createdSkill = skillService.createSkill(user.getId(), createDto);
 
 
         APIPostResponse<SkillResponseDto> response = APIPostResponse.success(createdSkill);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<APIListResponse<SkillResponseDto>> getSkillsByUserId(@PathVariable Long userId) {
-        List<SkillResponseDto> skills = skillService.getSkillsByUserId(userId);
+    @GetMapping("/")
+    public ResponseEntity<APIListResponse<SkillResponseDto>> getSkillsByUserId(
+            @AuthenticationPrincipal UserEntity user
+    ) {
+        List<SkillResponseDto> skills = skillService.getSkillsByUserId(user.getId());
 
 
         APIListResponse<SkillResponseDto> response = APIListResponse.success(skills);
