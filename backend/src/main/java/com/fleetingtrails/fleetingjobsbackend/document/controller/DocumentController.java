@@ -3,10 +3,12 @@ package com.fleetingtrails.fleetingjobsbackend.document.controller;
 import com.fleetingtrails.fleetingjobsbackend.document.dto.ResumeFromDescriptionRequestDto;
 import com.fleetingtrails.fleetingjobsbackend.document.dto.ResumeFromUrlRequestDto;
 import com.fleetingtrails.fleetingjobsbackend.document.service.DocumentService;
+import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +35,12 @@ public class DocumentController {
     }
 
     @PostMapping("/generate/resume/from-description")
-    public ResponseEntity<byte[]> generateResumeFromDescription (@RequestBody ResumeFromDescriptionRequestDto body) {
-        byte[] pdf = documentService.generateResumeFromDescription(body);
+    public ResponseEntity<byte[]> generateResumeFromDescription (
+            @RequestBody ResumeFromDescriptionRequestDto body,
+            @AuthenticationPrincipal UserEntity user
+    ) {
+
+        byte[] pdf = documentService.generateResumeFromDescription(body, user.getId());
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.APPLICATION_PDF)

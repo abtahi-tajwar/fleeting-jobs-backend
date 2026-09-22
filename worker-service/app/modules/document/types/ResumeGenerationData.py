@@ -6,3 +6,4 @@ class ResumeGenerationData(BaseModel):
 class ResumeGenerationDataSkills(BaseModel):
     tools_technologies: list[str]
     soft_skills: list[str]
+    

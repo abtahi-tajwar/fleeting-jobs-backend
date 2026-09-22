@@ -40,13 +40,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<UserResponseDto> getProfile (
-            @AuthenticationPrincipal UserEntity user
-    ) {
-        return ResponseEntity.ok(userMapper.toResponseDto(user));
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<APIGetResponse<UserResponseDto>> getUserById(@PathVariable Long id) {
         UserResponseDto user = userService.getUserById(id);

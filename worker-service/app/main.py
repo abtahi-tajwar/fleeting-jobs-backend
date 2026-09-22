@@ -56,7 +56,7 @@ async def scrape_job_list(request: ScrapeJobRequest):
 async def route_generate_resume_from_url(request: GenerateResumeFromUrl):
     url = request.url
 
-    pdf_buffer = await document_service.generate_resume_from_url(url)
+    pdf_buffer = await document_service.generate_resume_from_url(url, request.profile)
     return StreamingResponse(
         pdf_buffer,
         media_type="application/pdf",
@@ -66,10 +66,11 @@ async def route_generate_resume_from_url(request: GenerateResumeFromUrl):
     )
 
 @app.post("/documents/generate/from_description/resume.pdf")
-async def route_generate_resume_from_url(request: GenerateResumeFromDescription):
+async def route_generate_resume_from_description(request: GenerateResumeFromDescription):
     desc = request.description
+    profile = request.profile
 
-    pdf_buffer = await document_service.generate_resume_from_description(desc)
+    pdf_buffer = await document_service.generate_resume_from_description(desc, profile)
     return StreamingResponse(
         pdf_buffer,
         media_type="application/pdf",

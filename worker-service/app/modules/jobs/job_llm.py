@@ -2,6 +2,8 @@ import json
 
 from app.common.service.llm.ollama.ollama_service import ollama_service
 from app.common.service.llm.openai.openai_service import openai_service
+from app.modules.document.types.ResumeGenerationData import ResumeGenerationData
+from app.modules.profile.types.Profile import Profile
 
 
 class JobLlm:
@@ -34,5 +36,9 @@ class JobLlm:
         openai_response = await openai_service.json_response_chat(prompt, example_format)
         print(json.dumps(openai_response, indent=1))
         return openai_response
+    
+    async def tailor_resume_data(profile: Profile, resume_gen_data: ResumeGenerationData):
+        # Not implemented yet, need to implement
+        pass
 
 job_llm = JobLlm()

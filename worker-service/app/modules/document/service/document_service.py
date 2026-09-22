@@ -1,3 +1,4 @@
+from app.modules.profile.types.Profile import Profile
 import json
 
 from app.modules.document.generate_resume_pdf import pdf_service
@@ -7,15 +8,16 @@ from app.modules.jobs.job_parser import job_parser
 
 
 class DocumentService:
-    async def generate_resume_from_url(self, url: str):
-        description = await job_parser.extract_job_details_without_parser(url)
-        pdf = await self.generate_resume_from_description(description)
+    async def generate_resume_from_url(self, url: str, profile: Profile):
+        description = await job_parser.extract_job_details_without_parser(url, profile)
+        pdf = await self.generate_resume_from_description(description, profile)
         return pdf
-    async def generate_resume_from_description(self, description: str):
+    async def generate_resume_from_description(self, description: str, profile: Profile):
         skills = await job_llm.extract_job_requirements(description)
         resume_gen_data = ResumeGenerationData(
             skills=skills
         )
+        await job_llm.tailor_resume_data(profile, resume_gen_data)
         return pdf_service.generate_resume(resume_gen_data)
 
 document_service = DocumentService()

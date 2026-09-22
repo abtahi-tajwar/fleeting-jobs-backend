@@ -1,5 +1,6 @@
 package com.fleetingtrails.fleetingjobsbackend.profile._submodules.workexperience.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class WorkExperienceEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private UserEntity user;
 
     @Column(nullable = false)
