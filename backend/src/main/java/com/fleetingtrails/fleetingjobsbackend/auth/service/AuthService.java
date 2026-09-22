@@ -3,6 +3,8 @@ package com.fleetingtrails.fleetingjobsbackend.auth.service;
 import com.fleetingtrails.fleetingjobsbackend.auth.dto.AuthResponseDto;
 import com.fleetingtrails.fleetingjobsbackend.auth.dto.LoginRequestDto;
 import com.fleetingtrails.fleetingjobsbackend.auth.dto.SetPasswordRequestDto;
+import com.fleetingtrails.fleetingjobsbackend.auth.entity.PermissionEntity;
+import com.fleetingtrails.fleetingjobsbackend.auth.repository.PermissionRepository;
 import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
 import com.fleetingtrails.fleetingjobsbackend.user.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -27,21 +30,27 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final PermissionRepository permissionRepository;
 
     public AuthService(UserRepository userRepository,
                        JwtService jwtService,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       PermissionRepository permissionRepository) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
+        this.permissionRepository = permissionRepository;
     }
 
-    public AuthResponseDto login(LoginRequestDto request) {
+     public AuthResponseDto login(LoginRequestDto request) {
         UserEntity user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
 
         if (matches(request.getPassword(), user.getPassword())) {
-            return toAuthenticatedResponse(user);
+            List<PermissionEntity> permissionEntities = permissionRepository.findByRole(user.getRole());
+            AuthResponseDto authenticatedUser = toAuthenticatedResponse(user);
+            authenticatedUser.setPermissions(permissionEntities);
+            return authenticatedUser;
         }
 
         if (matches(request.getPassword(), user.getOtp())) {
