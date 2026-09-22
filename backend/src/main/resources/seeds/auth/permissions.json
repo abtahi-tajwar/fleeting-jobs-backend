@@ -6,6 +6,10 @@
       "UPDATE": true,
       "DELETE": true,
       "UPDATE_STATUS": true
+    },
+    "JOBS": {
+      "LIST": true,
+      "PROCESS": true
     }
   },
   "SUBSCRIBER": {

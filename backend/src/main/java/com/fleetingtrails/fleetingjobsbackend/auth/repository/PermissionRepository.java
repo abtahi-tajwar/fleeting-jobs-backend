@@ -2,7 +2,7 @@ package com.fleetingtrails.fleetingjobsbackend.auth.repository;
 
 import com.fleetingtrails.fleetingjobsbackend.auth.entity.PermissionEntity;
 import com.fleetingtrails.fleetingjobsbackend.auth.entity.RoleEntity;
-import com.fleetingtrails.fleetingjobsbackend.auth.enums.AppModule;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

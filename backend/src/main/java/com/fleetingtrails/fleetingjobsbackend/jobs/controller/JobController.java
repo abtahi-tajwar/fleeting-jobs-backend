@@ -1,5 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.jobs.controller;
 
+import com.fleetingtrails.fleetingjobsbackend.auth.annotation.Authorize;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIGetResponse;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIPostResponse;
 import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.dto.RequestJobDetailsMessageDto;
@@ -31,10 +33,19 @@ public class JobController {
         return APIGetResponse.success(data);
     }
 
+    @Authorize(
+            module = AppModule.JOBS,
+            action = "PROCESS"
+    )
     @PostMapping("process/fetch/description")
     public List<JobListItemDto> processJobDescriptionFetch () {
         return jobService.processJobDescriptionFetch();
     }
+
+    @Authorize(
+            module = AppModule.JOBS,
+            action = "PROCESS"
+    )
     @PostMapping("process/fetch/jobs")
     public APIPostResponse<String> processFetchJobs () {
         try {

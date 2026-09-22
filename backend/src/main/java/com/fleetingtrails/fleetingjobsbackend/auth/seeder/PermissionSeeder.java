@@ -4,7 +4,7 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import com.fleetingtrails.fleetingjobsbackend.auth.entity.PermissionEntity;
 import com.fleetingtrails.fleetingjobsbackend.auth.entity.RoleEntity;
-import com.fleetingtrails.fleetingjobsbackend.auth.enums.AppModule;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import com.fleetingtrails.fleetingjobsbackend.auth.repository.PermissionRepository;
 import com.fleetingtrails.fleetingjobsbackend.auth.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -90,7 +90,7 @@ public class PermissionSeeder {
             seedPermission(
                     role,
                     module,
-                    null,
+                    AppModule.Submodule.DEFAULT,
                     nestedKey,
                     requireBoolean(nestedValue, role.getName(), moduleKey, nestedKey)
             );

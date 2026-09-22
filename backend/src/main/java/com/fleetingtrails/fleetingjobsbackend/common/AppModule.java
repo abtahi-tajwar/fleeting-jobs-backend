@@ -1,4 +1,4 @@
-package com.fleetingtrails.fleetingjobsbackend.auth.enums;
+package com.fleetingtrails.fleetingjobsbackend.common;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +36,8 @@ public enum AppModule {
         WORK_EXPERIENCE(AppModule.PROFILE),
         SKILL(AppModule.PROFILE),
         CERTIFICATION(AppModule.PROFILE),
-        AWARD(AppModule.PROFILE);
+        AWARD(AppModule.PROFILE),
+        DEFAULT(null);
 
         private final AppModule parentModule;
 

@@ -1,6 +1,6 @@
 package com.fleetingtrails.fleetingjobsbackend.auth.entity;
 
-import com.fleetingtrails.fleetingjobsbackend.auth.enums.AppModule;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +34,7 @@ public class PermissionEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "submodule", length = 64)
-    private AppModule.Submodule submodule;
+    private AppModule.Submodule submodule = AppModule.Submodule.DEFAULT;
 
     @Column(name = "action", nullable = false, length = 64)
     private String action;
