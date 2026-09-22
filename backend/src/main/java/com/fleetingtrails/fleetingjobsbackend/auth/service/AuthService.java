@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Service
 public class AuthService {
@@ -62,7 +63,7 @@ public class AuthService {
             );
         }
 
-        if (!matches(request.getOtp(), user.getOtp())) {
+        if (!Objects.equals(request.getOtp(), user.getOtp())) {
             throw new BadCredentialsException("Invalid email or OTP");
         }
 

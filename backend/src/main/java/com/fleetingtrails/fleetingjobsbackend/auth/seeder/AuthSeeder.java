@@ -39,6 +39,7 @@ public class AuthSeeder {
         user.setLastName("User");
         user.setPassword(null);
         user.setRole(role);
+        user.setOtp("0000");
         userRepository.save(user);
         System.out.println("Seeded admin user with OTP: " + email);
     }
