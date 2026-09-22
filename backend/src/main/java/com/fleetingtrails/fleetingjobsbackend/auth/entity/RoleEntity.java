@@ -22,8 +22,8 @@ public class RoleEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PermissionEntity> permissions = new ArrayList<>();
+//    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<PermissionEntity> permissions = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -32,12 +32,4 @@ public class RoleEntity {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    public void replacePermissions(List<PermissionEntity> nextPermissions) {
-        permissions.clear();
-        for (PermissionEntity permission : nextPermissions) {
-            permission.setRole(this);
-            permissions.add(permission);
-        }
-    }
 }
