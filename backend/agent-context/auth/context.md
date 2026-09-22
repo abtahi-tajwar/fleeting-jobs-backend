@@ -97,7 +97,9 @@ The seeder is skip-if-exists, like `AuthSeeder.seedUser` / `seedRoles`. It looks
 ```
 authSeeder.seedRoles();
 permissionSeeder.seedPermissions();
-authSeeder.seedUser("admin@test.com", "password123");
+authSeeder.seedUser("admin@test.com", "0000");
+authSeeder.seedUser("abtahitajwar@gmail.com", "0000", "SUBSCRIBER", "Abtahi", "Tajwar");
+profileSeeder.seedDemoProfile();
 ```
 
 ## Password vs OTP
@@ -151,12 +153,17 @@ After this, the old OTP cannot be used again. The user logs in with the new pass
 
 ## User seeding
 
-`AuthSeeder.seedUser(email, rawOtp)` creates an `ADMIN` if the email does not exist:
+`AuthSeeder.seedUser(email, rawOtp)` creates a `SUPER_ADMIN` named Admin User if the email does not exist.
 
-- `otp` = BCrypt(rawOtp)
+`AuthSeeder.seedUser(email, rawOtp, roleName, firstName, lastName)` creates a user with the given role (used for the demo `SUBSCRIBER`).
+
+- `otp` = the raw OTP string passed in
 - `password` = null
 
-`DatabaseSeeder` currently seeds `admin@test.com` with OTP `password123`.
+`DatabaseSeeder` currently seeds:
+
+- `admin@test.com` / OTP `0000` as `SUPER_ADMIN`
+- `abtahitajwar@gmail.com` / OTP `0000` as `SUBSCRIBER`
 
 The seeder is skip-if-exists. An admin already created with a real password (old behavior) will keep working via normal login and will not be migrated onto OTP automatically.
 

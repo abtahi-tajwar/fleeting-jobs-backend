@@ -1,0 +1,162 @@
+{
+  "email": "abtahitajwar@gmail.com",
+  "user": {
+    "firstName": "Abtahi",
+    "lastName": "Tajwar",
+    "phone": "+1 (437) 955 1053",
+    "linkedin": "https://www.linkedin.com/in/abtahi-tajwar",
+    "github": "https://github.com/abtahi-tajwar",
+    "portfolioWebsite": "https://abtahitajwar.com",
+    "city": "Toronto",
+    "province": "ON",
+    "country": "Canada",
+    "summary": "Java fullstack developer and founder of Fleeting Trails. Builds production APIs and UIs with Spring Boot, React, and Next.js, including an AI-powered job aggregation platform (Fleeting Jobs) that scrapes listings and generates tailored resumes. Experience leading frontend work on Bleaum, a POS used by 300+ retailers, plus CI/CD, Docker, and OpenAI integration."
+  },
+  "educations": [
+    {
+      "institution": "Niagara University in Ontario",
+      "degree": "M.Sc.",
+      "major": "Information Security & Digital Forensics",
+      "gpa": "3.92 / 4.00",
+      "startDate": "2024-09-01",
+      "endDate": "2026-08-31",
+      "graduated": true
+    },
+    {
+      "institution": "American International University Bangladesh",
+      "degree": "B.Sc.",
+      "major": "Computer Science & Engineering",
+      "gpa": "3.89 / 4.00",
+      "startDate": "2018-01-01",
+      "endDate": "2022-12-31",
+      "graduated": true
+    }
+  ],
+  "workExperiences": [
+    {
+      "company": "Fleeting Trails",
+      "position": "Software Developer & Founder",
+      "location": "Toronto, ON",
+      "employmentType": "Self-Employed",
+      "startDate": "2025-01-01",
+      "endDate": null,
+      "currentlyWorking": true,
+      "description": "Founded a software venture for client work that expanded into product development.\nBuilt VaneJS, a lightweight JavaScript UI and state-management library.\nDevelop and maintain projects to explore new technologies and strengthen engineering skills.\nManage CI/CD, containerized deployments, cloud VPS infrastructure, and production environments.\nActively building Fleeting Jobs, an AI-powered job application platform."
+    },
+    {
+      "company": "Alagzoo Software LLC",
+      "position": "Full-Stack Developer",
+      "location": "Remote / Chicago, US",
+      "employmentType": "Full-time",
+      "startDate": "2022-04-01",
+      "endDate": "2025-02-28",
+      "currentlyWorking": false,
+      "description": "API development and integration, UI updates, and bug fixes.\nClosed JIRA tickets in Scrum sprints and standups.\nSynced weekly with clients on owned modules.\nLed the frontend team on Bleaum, an inventory and POS system used by 300+ retailers.\nMaintained the Java Spring Boot backend, including Kafka and legacy third-party APIs."
+    },
+    {
+      "company": "Xit Bangladesh",
+      "position": "Web Developer",
+      "location": "Dhaka, BD",
+      "employmentType": "Full-time",
+      "startDate": "2021-02-01",
+      "endDate": "2022-04-30",
+      "currentlyWorking": false,
+      "description": "Built and maintained production e-commerce platforms.\nCreated a Resume Builder web app with live preview and a Firebase backend.\nCollaborated with design and QA on accessibility and responsive UI."
+    }
+  ],
+  "skills": [
+    {
+      "name": "Java",
+      "category": "Languages/Frameworks",
+      "strength": 9,
+      "yearsExperience": 4.0,
+      "notes": null
+    },
+    {
+      "name": "Spring Boot",
+      "category": "Languages/Frameworks",
+      "strength": 9,
+      "yearsExperience": 3.0,
+      "notes": null
+    },
+    {
+      "name": "JavaScript",
+      "category": "Languages/Frameworks",
+      "strength": 8,
+      "yearsExperience": 5.0,
+      "notes": null
+    },
+    {
+      "name": "TypeScript",
+      "category": "Languages/Frameworks",
+      "strength": 8,
+      "yearsExperience": 4.0,
+      "notes": null
+    },
+    {
+      "name": "React",
+      "category": "Languages/Frameworks",
+      "strength": 8,
+      "yearsExperience": 4.0,
+      "notes": null
+    },
+    {
+      "name": "Next.js",
+      "category": "Languages/Frameworks",
+      "strength": 7,
+      "yearsExperience": 3.0,
+      "notes": null
+    },
+    {
+      "name": "OpenAI Integration",
+      "category": "Tools & Technologies",
+      "strength": 7,
+      "yearsExperience": 2.0,
+      "notes": null
+    },
+    {
+      "name": "Docker",
+      "category": "Tools & Technologies",
+      "strength": 8,
+      "yearsExperience": 3.0,
+      "notes": null
+    },
+    {
+      "name": "Git",
+      "category": "Tools & Technologies",
+      "strength": 8,
+      "yearsExperience": 5.0,
+      "notes": null
+    },
+    {
+      "name": "Jira",
+      "category": "Tools & Technologies",
+      "strength": 7,
+      "yearsExperience": 3.0,
+      "notes": null
+    },
+    {
+      "name": "CI/CD Automation",
+      "category": "Tools & Technologies",
+      "strength": 7,
+      "yearsExperience": 3.0,
+      "notes": null
+    },
+    {
+      "name": "API Integration",
+      "category": "Tools & Technologies",
+      "strength": 9,
+      "yearsExperience": 4.0,
+      "notes": null
+    }
+  ],
+  "awards": [
+    {
+      "title": "Valedictorian Award",
+      "organization": "Niagara University in Ontario",
+      "date": "2026-06-01",
+      "description": "Awarded for the M.Sc. in Information Security & Digital Forensics (CGPA 3.92 / 4.00)."
+    }
+  ],
+  "certifications": []
+}

@@ -38,19 +38,6 @@ app = FastAPI(lifespan=lifespan)
 def root():
     return {"message": "Application is running successfully!"}
 
-# #Test, needs to be removed later
-# from fastapi import Request
-
-# @app.post("/jobs/scrape-list/")
-# async def scrape_job_list(request: Request):
-#     body = await request.json()
-
-#     print("========== RECEIVED ==========")
-#     print(body)
-#     print("==============================")
-
-#     return {"received": body}
-# #End test function
 
 @app.post("/jobs/scrape-list/")
 async def scrape_job_list(request: ScrapeJobRequest):

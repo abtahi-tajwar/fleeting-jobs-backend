@@ -2,7 +2,7 @@
 
 This file is the **application-level architecture context** for the Fleeting Jobs backend. Any AI agent working on this codebase must read this file first, then read the relevant module context files before making changes.
 
-**Last updated:** 2026-09-21 (roles/permissions tables + AppModule enum)
+**Last updated:** 2026-09-22 (demo profile seeder)
 
 ---
 
@@ -284,6 +284,8 @@ profile/_submodules/
 
 Each submodule has the full layered stack: `entity`, `repository`, `service`, `controller`, `mapper`, `dto`.
 
+`profile/seeder/ProfileSeeder` loads `seeds/profile/demo-profile.json` onto the seeded SUBSCRIBER user. See `agent-context/profile/context.md`.
+
 Each profile entity has `@ManyToOne` to `UserEntity` (`user_id`).
 
 Typical submodule API:
@@ -510,7 +512,9 @@ On application startup, `CommandLineRunner` beans seed data:
 
 - `DatabaseSeeder` → `AuthSeeder.seedRoles()` from `src/main/resources/seeds/auth/roles.json`
 - `DatabaseSeeder` → `PermissionSeeder.seedPermissions()` from `src/main/resources/seeds/auth/permissions.json` (roles must already exist)
-- `DatabaseSeeder` → `AuthSeeder.seedUser(...)` seeds admin `admin@test.com` with OTP `password123` if missing (`password` null until set-password)
+- `DatabaseSeeder` → `AuthSeeder.seedUser("admin@test.com", "0000")` seeds SUPER_ADMIN if missing
+- `DatabaseSeeder` → `AuthSeeder.seedUser(..., "SUBSCRIBER", ...)` seeds demo subscriber `abtahitajwar@gmail.com` if missing
+- `DatabaseSeeder` → `ProfileSeeder.seedDemoProfile()` from `src/main/resources/seeds/profile/demo-profile.json` (subscriber must already exist)
 - `SeedRunner` → `CompanySeeder` upserts companies + parser templates from CSV/JSON
 
 Keep seed data under `src/main/resources/seeds/`. Idempotent skip-if-exists inserts are required.

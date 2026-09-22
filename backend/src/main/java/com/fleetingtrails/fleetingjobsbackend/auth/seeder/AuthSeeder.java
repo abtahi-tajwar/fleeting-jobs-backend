@@ -27,21 +27,31 @@ public class AuthSeeder {
     private final RoleRepository roleRepository;
 
     public void seedUser(String email, String rawOtp) {
+        seedUser(email, rawOtp, "SUPER_ADMIN", "Admin", "User");
+    }
+
+    public void seedUser(
+            String email,
+            String rawOtp,
+            String roleName,
+            String firstName,
+            String lastName
+    ) {
         if (userRepository.findByEmail(email).isPresent()) return;
 
         RoleEntity role = roleRepository
-                .findByName("SUPER_ADMIN")
-                .orElseThrow(() -> new IllegalStateException("SUPER_ADMIN role not found"));
+                .findByName(roleName)
+                .orElseThrow(() -> new IllegalStateException(roleName + " role not found"));
 
         UserEntity user = new UserEntity();
         user.setEmail(email);
-        user.setFirstName("Admin");
-        user.setLastName("User");
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
         user.setPassword(null);
         user.setRole(role);
-        user.setOtp("0000");
+        user.setOtp(rawOtp);
         userRepository.save(user);
-        System.out.println("Seeded admin user with OTP: " + email);
+        System.out.println("Seeded " + roleName + " user with OTP: " + email);
     }
 
     public void seedRoles () {
