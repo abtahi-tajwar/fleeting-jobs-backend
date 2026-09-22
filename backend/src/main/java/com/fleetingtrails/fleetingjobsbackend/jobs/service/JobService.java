@@ -48,6 +48,7 @@ public class JobService {
     public void processFetchJobs() {
         LocalDateTime cutoff = LocalDateTime.now().minus(Duration.ofMillis(JobConstants.SCRAPE_INTERVAL_MS));
         List<CompanyEntity> companiesToScrape = companyRepository.findByLastScrapedAtIsNullOrLastScrapedAtBefore(cutoff);
+//        List<CompanyEntity> companiesToScrape = companyRepository.findAll();
         for (CompanyEntity company : companiesToScrape) {
             ScrapeJobListBodyDto body = new ScrapeJobListBodyDto();
             body.setCompany_id(company.getId());

@@ -1,27 +1,29 @@
 from pydantic import BaseModel, HttpUrl
 
+from app.common.config.PydanticCamelCaseModel import PydanticCamelCaseModel
 
-class PostingCount(BaseModel):
+
+class PostingCount(PydanticCamelCaseModel):
     selector: str
 
 
-class Field(BaseModel):
+class Field(PydanticCamelCaseModel):
     type: str
     selector: str
     attribute: str | None = None
     absolute: bool | None = None
 
 
-class Listing(BaseModel):
+class Listing(PydanticCamelCaseModel):
     container: str
     fields: dict[str, Field]
 
 
-class JobDetails(BaseModel):
+class JobDetails(PydanticCamelCaseModel):
     description: str
 
 
-class Pagination(BaseModel):
+class Pagination(PydanticCamelCaseModel):
     type: str
     parameter: str | None = None
     start: int | None = None
@@ -30,17 +32,17 @@ class Pagination(BaseModel):
     additional_parameters: dict[str, str] | None = None
 
 
-class ParserTemplate(BaseModel):
+class ParserTemplate(PydanticCamelCaseModel):
     company: str
     version: int
-    start_url: HttpUrl
+    listing_url: HttpUrl
     posting_count: PostingCount | None = None
     listing: Listing
     job_details: JobDetails | None = None
     pagination: Pagination | None = None
 
 
-class ScrapeJobRequest(BaseModel):
+class ScrapeJobRequest(PydanticCamelCaseModel):
     company_id: int
     listing_url: HttpUrl
     parser_template: ParserTemplate

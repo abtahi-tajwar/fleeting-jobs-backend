@@ -1,7 +1,7 @@
 {
   "company": "RBC",
   "version": 1,
-  "start_url": "https://jobs.rbc.com/ca/en/c/technology-analytics-research-jobs",
+  "listing_url": "https://jobs.rbc.com/ca/en/c/technology-analytics-research-jobs",
   "posting_count": {
     "selector": "span.result-count"
   },

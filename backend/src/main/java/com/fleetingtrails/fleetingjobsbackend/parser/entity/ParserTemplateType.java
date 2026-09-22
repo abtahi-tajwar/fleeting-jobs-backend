@@ -1,18 +1,15 @@
 package com.fleetingtrails.fleetingjobsbackend.parser.entity;
 
 import lombok.Data;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.Map;
 
 @Data
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ParserTemplateType {
 
     private String company;
     private Integer version;
-    private String startUrl;
+    private String listingUrl;
 
     private PostingCount postingCount;
     private Listing listing;
@@ -35,7 +32,6 @@ public class ParserTemplateType {
         private String type;
         private String selector;
 
-        // Only used for attribute fields
         private String attribute;
         private Boolean absolute;
     }

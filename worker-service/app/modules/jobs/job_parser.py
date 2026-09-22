@@ -29,7 +29,7 @@ class JobParser:
         size = 10
         jobs = []
 
-        await self.page.goto(str(config.start_url))
+        await self.page.goto(str(config.listing_url))
         await self.page.wait_for_selector(config.listing.container)
 
         initial_content = await self.page.content()
@@ -50,7 +50,7 @@ class JobParser:
 
         for current_page in range(1, math.ceil(total_pages)):
             page_url = (
-                f"{config.start_url}?"
+                f"{config.listing_url}?"
                 f"{config.pagination.parameter}="
                 f"{current_page * config.pagination.increment}&s=1"
             )
