@@ -49,6 +49,15 @@ public class JobService {
         LocalDateTime cutoff = LocalDateTime.now().minus(Duration.ofMillis(JobConstants.SCRAPE_INTERVAL_MS));
         List<CompanyEntity> companiesToScrape = companyRepository.findByLastScrapedAtIsNullOrLastScrapedAtBefore(cutoff);
 //        List<CompanyEntity> companiesToScrape = companyRepository.findAll();
+        this.requestWorkerServiceJobFetch(companiesToScrape);
+
+    }
+    public void processFetchJobsByCompany (long id) {
+        CompanyEntity companyEntity = companyRepository.findById(id).orElseThrow();
+        this.requestWorkerServiceJobFetch(List.of(companyEntity));
+    }
+
+    public void requestWorkerServiceJobFetch(List<CompanyEntity> companiesToScrape) {
         for (CompanyEntity company : companiesToScrape) {
             ScrapeJobListBodyDto body = new ScrapeJobListBodyDto();
             body.setCompany_id(company.getId());

@@ -8,10 +8,7 @@ import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.dto.Request
 import com.fleetingtrails.fleetingjobsbackend.common.services.rabbit.producer.RabbitProducerService;
 import com.fleetingtrails.fleetingjobsbackend.jobs.dto.JobListItemDto;
 import com.fleetingtrails.fleetingjobsbackend.jobs.service.JobService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -54,6 +51,22 @@ public class JobController {
     public APIPostResponse<String> processFetchJobs () {
         try {
             jobService.processFetchJobs();
+            return APIPostResponse.success("Job Fetch queried successfully");
+        } catch (Exception e) {
+            return APIPostResponse.failed(e.getMessage());
+        }
+    }
+
+    @Authorize(
+            module = AppModule.JOBS,
+            action = "PROCESS"
+    )
+    @PostMapping("process/fetch/jobs_by_company/{companyId}")
+    public APIPostResponse<String> processFetchJobsByCompany (
+            @RequestBody long companyId
+    ) {
+        try {
+            jobService.processFetchJobsByCompany(companyId);
             return APIPostResponse.success("Job Fetch queried successfully");
         } catch (Exception e) {
             return APIPostResponse.failed(e.getMessage());
