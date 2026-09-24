@@ -1,5 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.parser.controller;
 
+import com.fleetingtrails.fleetingjobsbackend.auth.annotation.Authorize;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIListResponse;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIPostResponse;
 import com.fleetingtrails.fleetingjobsbackend.parser.dto.ParserTemplateCreateDto;
@@ -22,6 +24,10 @@ public class ParserTemplateController {
         this.parserTemplateService = service;
     }
 
+    @Authorize(
+            module = AppModule.PARSER,
+            action = "LIST"
+    )
     @GetMapping("/list")
     public APIListResponse<ParserTemplateListItemDto> getParserTemplates (
             @ModelAttribute ParserTemplateFilterDto filter
@@ -29,11 +35,19 @@ public class ParserTemplateController {
         return APIListResponse.success(parserTemplateService.getParserTemplates(filter));
     }
 
+    @Authorize(
+            module = AppModule.PARSER,
+            action = "READ"
+    )
     @GetMapping("/get/{id}")
     public APIPostResponse<ParserTemplateGetDto> getParserTemplate (@PathVariable Long id) {
         return APIPostResponse.success(parserTemplateService.getParserTemplateById(id));
     }
 
+    @Authorize(
+            module = AppModule.PARSER,
+            action = "CREATE"
+    )
     @PostMapping("/create")
     public APIPostResponse<ParserTemplateGetDto> createParserTemplate (
             @Valid @RequestBody ParserTemplateCreateDto body
@@ -41,6 +55,10 @@ public class ParserTemplateController {
         return APIPostResponse.success(parserTemplateService.createParserTemplate(body));
     }
 
+    @Authorize(
+            module = AppModule.PARSER,
+            action = "UPDATE"
+    )
     @PutMapping("/update/{id}")
     public APIPostResponse<ParserTemplateGetDto> updateParserTemplate (
             @PathVariable Long id,
@@ -49,6 +67,10 @@ public class ParserTemplateController {
         return APIPostResponse.success(parserTemplateService.updateParserTemplate(id, body));
     }
 
+    @Authorize(
+            module = AppModule.PARSER,
+            action = "DELETE"
+    )
     @DeleteMapping("/delete/{id}")
     public APIPostResponse<Void> deleteParserTemplate (@PathVariable Long id) {
         parserTemplateService.deleteParserTemplate(id);

@@ -1,6 +1,6 @@
 # Profile module context
 
-**Last updated:** 2026-09-22
+**Last updated:** 2026-09-24
 
 Read `agent-context/architecture.md` first. Update this file after profile-module changes.
 
@@ -24,6 +24,8 @@ profile/
 ```
 
 Each submodule has `entity`, `repository`, `service`, `controller`, `mapper`, `dto`.
+
+Submodule controller methods use `@Authorize` with `module = PROFILE` and the matching `AppModule.Submodule`. Actions follow `permissions.json` for that submodule: `CREATE` on POST, `LIST` on GET collection, `UPDATE` on PUT, `DELETE` on DELETE. There is no GET-by-id, so `READ` is not applied on these controllers.
 
 ## Demo profile seed
 

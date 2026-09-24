@@ -1,5 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.profile._submodules.certification.controller;
 
+import com.fleetingtrails.fleetingjobsbackend.auth.annotation.Authorize;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIListResponse;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIPostResponse;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.certification.dto.CertificationCreateDto;
@@ -23,6 +25,11 @@ public class CertificationController {
 
     private final CertificationService certificationService;
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.CERTIFICATION,
+            action = "CREATE"
+    )
     @PostMapping
     public ResponseEntity<APIPostResponse<CertificationResponseDto>> createCertification(
             @AuthenticationPrincipal UserEntity user,
@@ -32,6 +39,11 @@ public class CertificationController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.CERTIFICATION,
+            action = "LIST"
+    )
     @GetMapping
     public ResponseEntity<APIListResponse<CertificationResponseDto>> getCertificationsByUserId(@AuthenticationPrincipal UserEntity user) {
         List<CertificationResponseDto> certifications = certificationService.getCertificationsByUserId(user.getId());
@@ -39,6 +51,11 @@ public class CertificationController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.CERTIFICATION,
+            action = "UPDATE"
+    )
     @PutMapping("/{certificationId}")
     public ResponseEntity<APIPostResponse<CertificationResponseDto>> updateCertification(
             @PathVariable Long certificationId,
@@ -48,6 +65,11 @@ public class CertificationController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.CERTIFICATION,
+            action = "DELETE"
+    )
     @DeleteMapping("/{certificationId}")
     public ResponseEntity<Void> deleteCertification(@PathVariable Long certificationId) {
         certificationService.deleteCertification(certificationId);

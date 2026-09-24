@@ -1,5 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.profile._submodules.education.controller;
 
+import com.fleetingtrails.fleetingjobsbackend.auth.annotation.Authorize;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIListResponse;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIPostResponse;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.education.dto.EducationCreateDto;
@@ -23,6 +25,11 @@ public class EducationController {
 
     private final EducationService educationService;
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.EDUCATION,
+            action = "CREATE"
+    )
     @PostMapping("/")
     public ResponseEntity<APIPostResponse<EducationResponseDto>> createEducation(
             @AuthenticationPrincipal UserEntity user,
@@ -32,6 +39,11 @@ public class EducationController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.EDUCATION,
+            action = "LIST"
+    )
     @GetMapping("/")
     public ResponseEntity<APIListResponse<EducationResponseDto>> getEducationsByUserId(@AuthenticationPrincipal UserEntity user) {
         List<EducationResponseDto> educations = educationService.getEducationsByUserId(user.getId());
@@ -39,6 +51,11 @@ public class EducationController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.EDUCATION,
+            action = "UPDATE"
+    )
     @PutMapping("/{educationId}")
     public ResponseEntity<APIPostResponse<EducationResponseDto>> updateEducation(
             @PathVariable Long educationId,
@@ -48,6 +65,11 @@ public class EducationController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.EDUCATION,
+            action = "DELETE"
+    )
     @DeleteMapping("/{educationId}")
     public ResponseEntity<Void> deleteEducation(@PathVariable Long educationId) {
         educationService.deleteEducation(educationId);

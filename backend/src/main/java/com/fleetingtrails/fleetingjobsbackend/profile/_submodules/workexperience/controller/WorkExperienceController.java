@@ -1,5 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.profile._submodules.workexperience.controller;
 
+import com.fleetingtrails.fleetingjobsbackend.auth.annotation.Authorize;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIListResponse;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIPostResponse;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.workexperience.dto.WorkExperienceCreateDto;
@@ -23,6 +25,11 @@ public class WorkExperienceController {
 
     private final WorkExperienceService workExperienceService;
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.WORK_EXPERIENCE,
+            action = "CREATE"
+    )
     @PostMapping("/")
     public ResponseEntity<APIPostResponse<WorkExperienceResponseDto>> createWorkExperience(
             @AuthenticationPrincipal UserEntity user,
@@ -32,6 +39,12 @@ public class WorkExperienceController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.WORK_EXPERIENCE,
+            action = "LIST"
+    )
     @GetMapping("/")
     public ResponseEntity<APIListResponse<WorkExperienceResponseDto>> getWorkExperiencesByUserId(@AuthenticationPrincipal UserEntity user) {
         List<WorkExperienceResponseDto> experiences = workExperienceService.getWorkExperiencesByUserId(user.getId());
@@ -39,6 +52,11 @@ public class WorkExperienceController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.WORK_EXPERIENCE,
+            action = "UPDATE"
+    )
     @PutMapping("/{experienceId}")
     public ResponseEntity<APIPostResponse<WorkExperienceResponseDto>> updateWorkExperience(
             @PathVariable Long experienceId,
@@ -48,6 +66,11 @@ public class WorkExperienceController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.WORK_EXPERIENCE,
+            action = "DELETE"
+    )
     @DeleteMapping("/{experienceId}")
     public ResponseEntity<Void> deleteWorkExperience(@PathVariable Long experienceId) {
         workExperienceService.deleteWorkExperience(experienceId);

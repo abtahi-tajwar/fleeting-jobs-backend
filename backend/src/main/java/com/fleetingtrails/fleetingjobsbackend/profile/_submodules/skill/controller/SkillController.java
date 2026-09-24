@@ -1,5 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.profile._submodules.skill.controller;
 
+import com.fleetingtrails.fleetingjobsbackend.auth.annotation.Authorize;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIListResponse;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIPostResponse;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.skill.dto.SkillCreateDto;
@@ -24,6 +26,11 @@ public class SkillController {
     private final SkillService skillService;
 
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.SKILL,
+            action = "CREATE"
+    )
     @PostMapping("/")
     public ResponseEntity<APIPostResponse<SkillResponseDto>> createSkill(
             @Valid @RequestBody SkillCreateDto createDto,
@@ -36,6 +43,11 @@ public class SkillController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.SKILL,
+            action = "LIST"
+    )
     @GetMapping("/")
     public ResponseEntity<APIListResponse<SkillResponseDto>> getSkillsByUserId(
             @AuthenticationPrincipal UserEntity user
@@ -47,6 +59,11 @@ public class SkillController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.SKILL,
+            action = "UPDATE"
+    )
     @PutMapping("/{skillId}")
     public ResponseEntity<APIPostResponse<SkillResponseDto>> updateSkill(
             @PathVariable Long skillId,
@@ -57,6 +74,11 @@ public class SkillController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.SKILL,
+            action = "DELETE"
+    )
     @DeleteMapping("/{skillId}")
     public ResponseEntity<Void> deleteSkill(@PathVariable Long skillId) {
         skillService.deleteSkill(skillId);

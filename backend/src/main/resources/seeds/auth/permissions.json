@@ -1,6 +1,7 @@
 {
   "SUPER_ADMIN": {
     "USER": {
+      "LIST": true,
       "CREATE": true,
       "READ": true,
       "UPDATE": true,
@@ -10,12 +11,110 @@
     "JOBS": {
       "LIST": true,
       "PROCESS": true
+    },
+    "COMPANY": {
+      "LIST": true,
+      "CREATE": true,
+      "READ": true,
+      "UPDATE": true,
+      "DELETE": true
+    },
+    "DOCUMENT": {
+      "GENERATE": true
+    },
+    "PARSER": {
+      "LIST": true,
+      "READ": true,
+      "CREATE": true,
+      "UPDATE": true,
+      "DELETE": true
+    },
+    "PROFILE": {
+      "CREATE": true,
+      "READ": true,
+      "READ_OWN": true,
+      "AWARD": {
+        "LIST": true,
+        "READ": true,
+        "CREATE": true,
+        "UPDATE": true,
+        "DELETE": true
+      },
+      "CERTIFICATION": {
+        "LIST": true,
+        "READ": true,
+        "CREATE": true,
+        "UPDATE": true,
+        "DELETE": true
+      },
+      "EDUCATION": {
+        "LIST": true,
+        "READ": true,
+        "CREATE": true,
+        "UPDATE": true,
+        "DELETE": true
+      },
+      "SKILL": {
+        "LIST": true,
+        "READ": true,
+        "CREATE": true,
+        "UPDATE": true,
+        "DELETE": true
+      },
+      "WORK_EXPERIENCE": {
+        "LIST": true,
+        "READ": true,
+        "CREATE": true,
+        "UPDATE": true,
+        "DELETE": true
+      }
     }
   },
   "SUBSCRIBER": {
     "PROFILE": {
       "CREATE": true,
-      "READ_OWN": true
+      "READ_OWN": true,
+      "AWARD": {
+        "LIST": true,
+        "READ": true,
+        "CREATE": true,
+        "UPDATE": true,
+        "DELETE": true
+      },
+      "CERTIFICATION": {
+        "LIST": true,
+        "READ": true,
+        "CREATE": true,
+        "UPDATE": true,
+        "DELETE": true
+      },
+      "EDUCATION": {
+        "LIST": true,
+        "READ": true,
+        "CREATE": true,
+        "UPDATE": true,
+        "DELETE": true
+      },
+      "SKILL": {
+        "LIST": true,
+        "READ": true,
+        "CREATE": true,
+        "UPDATE": true,
+        "DELETE": true
+      },
+      "WORK_EXPERIENCE": {
+        "LIST": true,
+        "READ": true,
+        "CREATE": true,
+        "UPDATE": true,
+        "DELETE": true
+      }
+    },
+    "JOBS": {
+      "LIST": true
+    },
+    "DOCUMENT": {
+      "GENERATE": true
     }
   }
 }

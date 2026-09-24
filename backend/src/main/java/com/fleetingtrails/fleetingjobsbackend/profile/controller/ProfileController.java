@@ -1,5 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.profile.controller;
 
+import com.fleetingtrails.fleetingjobsbackend.auth.annotation.Authorize;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import com.fleetingtrails.fleetingjobsbackend.profile.dto.ProfileGetResponseDto;
 import com.fleetingtrails.fleetingjobsbackend.profile.service.ProfileService;
 import com.fleetingtrails.fleetingjobsbackend.user.dto.UserResponseDto;
@@ -16,6 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ProfileController {
     private final ProfileService profileService;
+
+    @Authorize(
+            module = AppModule.PROFILE,
+            action = "READ_OWN"
+    )
     @GetMapping
     public ResponseEntity<ProfileGetResponseDto> getProfile (
             @AuthenticationPrincipal UserEntity user

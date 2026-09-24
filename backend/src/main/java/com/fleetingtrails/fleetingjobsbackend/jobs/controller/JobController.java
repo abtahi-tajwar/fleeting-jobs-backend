@@ -25,6 +25,10 @@ public class JobController {
         this.jobService = jobService;
     }
 
+    @Authorize(
+            module = AppModule.JOBS,
+            action = "LIST"
+    )
     @GetMapping("/list")
     public APIGetResponse<List<JobListItemDto>> getAllJobs () {
         List<JobListItemDto> data = jobService.getJobs();

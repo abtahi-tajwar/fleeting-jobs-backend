@@ -1,5 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.user.controller;
 
+import com.fleetingtrails.fleetingjobsbackend.auth.annotation.Authorize;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIGetResponse;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIListResponse;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIPostResponse;
@@ -26,6 +28,10 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
+    @Authorize(
+            module = AppModule.USER,
+            action = "CREATE"
+    )
     @PostMapping
     public ResponseEntity<APIPostResponse<UserResponseDto>> createUser(@RequestBody UserCreateDto userCreateDto) {
         UserResponseDto createdUser = userService.createUser(userCreateDto);
@@ -33,6 +39,10 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @Authorize(
+            module = AppModule.USER,
+            action = "LIST"
+    )
     @GetMapping
     public ResponseEntity<APIListResponse<UserResponseDto>> getAllUsers() {
         List<UserResponseDto> users = userService.getAllUsers();
@@ -40,6 +50,10 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.USER,
+            action = "READ"
+    )
     @GetMapping("/{id}")
     public ResponseEntity<APIGetResponse<UserResponseDto>> getUserById(@PathVariable Long id) {
         UserResponseDto user = userService.getUserById(id);
@@ -47,6 +61,10 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.USER,
+            action = "UPDATE"
+    )
     @PutMapping("/{id}")
     public ResponseEntity<APIGetResponse<UserResponseDto>> updateUser(
             @PathVariable Long id,
@@ -56,6 +74,10 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.USER,
+            action = "DELETE"
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);

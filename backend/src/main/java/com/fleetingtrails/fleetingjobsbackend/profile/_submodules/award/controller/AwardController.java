@@ -1,5 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.profile._submodules.award.controller;
 
+import com.fleetingtrails.fleetingjobsbackend.auth.annotation.Authorize;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIListResponse;
 import com.fleetingtrails.fleetingjobsbackend.common.response.APIPostResponse;
 import com.fleetingtrails.fleetingjobsbackend.profile._submodules.award.dto.AwardCreateDto;
@@ -23,6 +25,11 @@ public class AwardController {
 
     private final AwardService awardService;
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.AWARD,
+            action = "CREATE"
+    )
     @PostMapping("/")
     public ResponseEntity<APIPostResponse<AwardResponseDto>> createAward(
             @AuthenticationPrincipal UserEntity user,
@@ -32,6 +39,11 @@ public class AwardController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.AWARD,
+            action = "LIST"
+    )
     @GetMapping("/")
     public ResponseEntity<APIListResponse<AwardResponseDto>> getAwardsByUserId(
             @AuthenticationPrincipal UserEntity user
@@ -41,6 +53,11 @@ public class AwardController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.AWARD,
+            action = "UPDATE"
+    )
     @PutMapping("/{awardId}")
     public ResponseEntity<APIPostResponse<AwardResponseDto>> updateAward(
             @PathVariable Long awardId,
@@ -50,6 +67,11 @@ public class AwardController {
         return ResponseEntity.ok(response);
     }
 
+    @Authorize(
+            module = AppModule.PROFILE,
+            submodule = AppModule.Submodule.AWARD,
+            action = "DELETE"
+    )
     @DeleteMapping("/{awardId}")
     public ResponseEntity<Void> deleteAward(@PathVariable Long awardId) {
         awardService.deleteAward(awardId);

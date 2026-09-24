@@ -1,5 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.document.controller;
 
+import com.fleetingtrails.fleetingjobsbackend.auth.annotation.Authorize;
+import com.fleetingtrails.fleetingjobsbackend.common.AppModule;
 import com.fleetingtrails.fleetingjobsbackend.document.dto.ResumeFromDescriptionRequestDto;
 import com.fleetingtrails.fleetingjobsbackend.document.dto.ResumeFromUrlRequestDto;
 import com.fleetingtrails.fleetingjobsbackend.document.service.DocumentService;
@@ -20,6 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class DocumentController {
     private final DocumentService documentService;
 
+    @Authorize(
+            module = AppModule.DOCUMENT,
+            submodule = AppModule.Submodule.DEFAULT,
+            action = "GENERATE"
+    )
     @PostMapping("/generate/resume/from-url")
     public ResponseEntity<byte[]> generateResumeFromUrl (@RequestBody ResumeFromUrlRequestDto body) {
         byte[] pdf = documentService.generateResumeFromUrl(body);
@@ -34,6 +41,11 @@ public class DocumentController {
 
     }
 
+    @Authorize(
+            module = AppModule.DOCUMENT,
+            submodule = AppModule.Submodule.DEFAULT,
+            action = "GENERATE"
+    )
     @PostMapping("/generate/resume/from-description")
     public ResponseEntity<byte[]> generateResumeFromDescription (
             @RequestBody ResumeFromDescriptionRequestDto body,
