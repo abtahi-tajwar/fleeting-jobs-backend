@@ -1,10 +1,13 @@
 package com.fleetingtrails.fleetingjobsbackend.parser.entity;
 
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 
 import java.util.Map;
 
 @Data
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ParserTemplateType {
 
     private String company;
@@ -17,36 +20,37 @@ public class ParserTemplateType {
     private Pagination pagination;
 
     @Data
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class PostingCount {
         private String selector;
     }
 
     @Data
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Listing {
         private String container;
         private Map<String, Field> fields;
     }
 
     @Data
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Field {
         private String type;
         private String selector;
-
         private String attribute;
         private Boolean absolute;
     }
 
     @Data
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class JobDetails {
         private String description;
     }
 
     @Data
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Pagination {
 
-        /**
-         * url_parameter, next_button, infinite_scroll, etc.
-         */
         private String type;
 
         private String parameter;

@@ -29,15 +29,17 @@ class JobParser:
         size = 10
         jobs = []
 
+
         await self.page.goto(str(config.listing_url))
         await self.page.wait_for_selector(config.listing.container)
 
         initial_content = await self.page.content()
         soup = BeautifulSoup(initial_content, "lxml")
-
+        posting_count_selector = config.posting_count.selector
         result_count = int(
-            soup.select_one(config.posting_count.selector).text.strip()
+            soup.select_one(posting_count_selector).text.strip()
         )
+        print("Result count:", result_count)
 
         total_pages = result_count / size
 
