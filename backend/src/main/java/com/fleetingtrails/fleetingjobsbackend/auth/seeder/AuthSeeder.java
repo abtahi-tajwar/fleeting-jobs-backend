@@ -4,6 +4,7 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import com.fleetingtrails.fleetingjobsbackend.auth.entity.RoleEntity;
 import com.fleetingtrails.fleetingjobsbackend.auth.repository.RoleRepository;
+import com.fleetingtrails.fleetingjobsbackend.auth.enums.AuthProvider;
 import com.fleetingtrails.fleetingjobsbackend.user.entity.UserEntity;
 import com.fleetingtrails.fleetingjobsbackend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +51,8 @@ public class AuthSeeder {
         user.setPassword(null);
         user.setRole(role);
         user.setOtp(rawOtp);
+        user.setAuthProvider(AuthProvider.LOCAL);
+        user.setEmailVerified(true);
         userRepository.save(user);
         System.out.println("Seeded " + roleName + " user with OTP: " + email);
     }

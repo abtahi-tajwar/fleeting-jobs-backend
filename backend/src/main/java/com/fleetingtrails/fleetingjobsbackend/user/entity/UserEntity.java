@@ -1,6 +1,7 @@
 package com.fleetingtrails.fleetingjobsbackend.user.entity;
 
 import com.fleetingtrails.fleetingjobsbackend.auth.entity.RoleEntity;
+import com.fleetingtrails.fleetingjobsbackend.auth.enums.AuthProvider;
 import jakarta.persistence.*;
 import jakarta.persistence.Column;
 import lombok.Data;
@@ -57,6 +58,22 @@ public class UserEntity {
 
     @Column(name = "otp")
     private String otp;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider", nullable = false)
+    private AuthProvider authProvider = AuthProvider.LOCAL;
+
+    @Column(name = "provider_subject")
+    private String providerSubject;
+
+    @Column(name = "email_verified", nullable = false)
+    private Boolean emailVerified = false;
+
+    @Column(name = "email_verification_token")
+    private String emailVerificationToken;
+
+    @Column(name = "email_verification_expires_at")
+    private LocalDateTime emailVerificationExpiresAt;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

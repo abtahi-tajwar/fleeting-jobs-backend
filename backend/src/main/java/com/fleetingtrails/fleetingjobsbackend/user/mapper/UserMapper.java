@@ -13,7 +13,14 @@ import org.mapstruct.MappingTarget;
 public interface UserMapper {
 
     @Mapping(target = "password", ignore = true)
-    @BeanMapping(ignoreUnmappedSourceProperties = "otp")
+    @BeanMapping(ignoreUnmappedSourceProperties = {
+            "otp",
+            "authProvider",
+            "providerSubject",
+            "emailVerified",
+            "emailVerificationToken",
+            "emailVerificationExpiresAt"
+    })
     UserResponseDto toResponseDto(UserEntity entity);
 
     @Mapping(target = "id", ignore = true)
@@ -21,6 +28,11 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "otp", ignore = true)
+    @Mapping(target = "authProvider", ignore = true)
+    @Mapping(target = "providerSubject", ignore = true)
+    @Mapping(target = "emailVerified", ignore = true)
+    @Mapping(target = "emailVerificationToken", ignore = true)
+    @Mapping(target = "emailVerificationExpiresAt", ignore = true)
     UserEntity toEntity(UserCreateDto createDto);
 
     @Mapping(target = "id", ignore = true)
@@ -28,5 +40,10 @@ public interface UserMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "otp", ignore = true)
+    @Mapping(target = "authProvider", ignore = true)
+    @Mapping(target = "providerSubject", ignore = true)
+    @Mapping(target = "emailVerified", ignore = true)
+    @Mapping(target = "emailVerificationToken", ignore = true)
+    @Mapping(target = "emailVerificationExpiresAt", ignore = true)
     void updateEntity(@MappingTarget UserEntity entity, UserUpdateDto updateDto);
 }

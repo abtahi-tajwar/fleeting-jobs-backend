@@ -50,6 +50,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
+            if (user != null && !Boolean.TRUE.equals(user.getEmailVerified())) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             UserEntity userDetails = this.authService.loadUserByUsername(userEmail);
 

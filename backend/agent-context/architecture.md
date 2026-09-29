@@ -2,7 +2,7 @@
 
 This file is the **application-level architecture context** for the Fleeting Jobs backend. Any AI agent working on this codebase must read this file first, then read the relevant module context files before making changes.
 
-**Last updated:** 2026-09-22 (demo profile seeder)
+**Last updated:** 2026-09-29 (subscriber signup + email confirmation)
 
 ---
 
@@ -211,9 +211,9 @@ Do not put business rules here.
 
 ### `auth` — authentication and authorization
 
-Purpose: login, first-login password setup (OTP), JWT issue/validation, Spring Security filter chain, RBAC role/permission catalog, admin user seeding.
+Purpose: login, subscriber signup (email + Google + LinkedIn), email confirmation, first-login password setup (OTP), JWT issue/validation, Spring Security, RBAC catalog, admin seeding.
 
-See `agent-context/auth/context.md` for OTP / set-password and the roles/permissions seed.
+See `agent-context/auth/context.md` for full flows.
 
 Notable packages (users still live in `user`; roles/permissions live here):
 
@@ -223,30 +223,30 @@ auth/
 ├── controller/AuthController.java
 ├── dto/
 ├── entity/RoleEntity.java, PermissionEntity.java
-├── enums/AppModule.java
-├── filter/JwtAuthenticationFilter.java
+├── enums/AuthProvider.java
+├── filter/AuthenticationFilter.java, AuthorizationInterceptor.java
 ├── repository/RoleRepository.java, PermissionRepository.java
 ├── seeder/AuthSeeder.java, PermissionSeeder.java
-└── service/AuthService.java, JwtService.java
+└── service/AuthService.java, EmailService.java, JwtService.java, OAuthService.java
 ```
 
-- Public endpoints: `/auth/**`, `POST /users`
-- All other HTTP requests require a valid JWT (`Authorization: Bearer ...`)
-- Stateless sessions (`SessionCreationPolicy.STATELESS`)
-- CSRF disabled
-- Permanent password and OTP are both hashed with BCrypt on `UserEntity`
-- Seeded users receive OTP only (`password` is null) and must call set-password before they can use protected APIs
-- Login with OTP returns `requiresPasswordSetup: true` and **no JWT**
-- `POST /auth/set-password` takes `{ email, otp, password }`, clears OTP, stores the new password, and issues a JWT
-- `AuthService` implements `UserDetailsService` and authenticates by email
-- `UserEntity.role` is still the old enum (`USER`, `ADMIN`) used by login responses. Endpoint authorization is still authenticated-vs-public, not yet enforced from the `roles` / `permissions` tables
-- RBAC catalog: `roles` + `permissions`, seeded from `src/main/resources/seeds/auth/roles.json` and `src/main/resources/seeds/auth/permissions.json`
-- Module/submodule names come from `AppModule` / `AppModule.Submodule`
+- Public endpoints: `/auth/**`, swagger, `POST /users`
+- All other HTTP requests require a valid JWT
+- Self-signup creates `SUBSCRIBER` users only
+- Email signup requires Mailtrap/SMTP confirmation before login
+- Google / LinkedIn signup verify provider tokens and issue JWT immediately
+- Seeded users still use OTP → set-password first-login
+- RBAC: `roles` + `permissions` + `@Authorize` on controllers
+- Module/submodule names: `common.AppModule`
 
 API:
 
-- `POST /auth/login` → `{ token, userId, email, role, requiresPasswordSetup }`
-- `POST /auth/set-password` → `{ token, userId, email, role, requiresPasswordSetup: false }`
+- `POST /auth/login`
+- `POST /auth/signup` (email/password subscriber)
+- `POST|GET /auth/confirm-email`
+- `POST /auth/signup/google`
+- `POST /auth/signup/linkedin`
+- `POST /auth/set-password`
 
 ### `user` — platform users regardless of role
 
